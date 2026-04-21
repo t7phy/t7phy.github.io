@@ -4,409 +4,83 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tanishq Sharma</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --ink:      #1c1c2e;
-      --ink-mid:  #4a4a6a;
-      --ink-soft: #8a8aa8;
-      --accent:   #3b3fa8;
-      --bg:       #e8e6e0;
-    }
-
-    html, body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: 'DM Sans', sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      padding: 1.4rem 2.4rem;
-      background: rgba(232,230,224,0.88);
-      backdrop-filter: blur(10px);
-    }
-
-    .hamburger {
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      padding: 6px;
-    }
-    .hamburger span {
-      display: block;
-      width: 24px;
-      height: 1.5px;
-      background: var(--ink);
-      border-radius: 1px;
-    }
-
-    /* LANDSCAPE DRAWER */
-    .drawer-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(28,28,46,0.25);
-      z-index: 200;
-    }
-    .drawer-overlay.open { display: block; }
-
-    .drawer {
-      position: fixed;
-      top: 0; right: -280px;
-      width: 260px;
-      height: 100%;
-      background: var(--bg);
-      z-index: 300;
-      padding: 4.5rem 2.2rem 2rem;
-      display: flex;
-      flex-direction: column;
-      transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
-    }
-    .drawer.open { right: 0; }
-
-    .drawer-close {
-      position: absolute;
-      top: 1.3rem; right: 1.6rem;
-      cursor: pointer;
-      font-size: 1.2rem;
-      color: var(--ink-mid);
-      background: none;
-      border: none;
-      line-height: 1;
-    }
-
-    .drawer a {
-      display: block;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 400;
-      font-size: 0.82rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink);
-      text-decoration: none;
-      padding: 1rem 0;
-    }
-    .drawer a + a { border-top: 1px solid rgba(28,28,46,0.07); }
-    .drawer a.coming-soon { color: var(--ink-soft); pointer-events: none; }
-    .cs-tag {
-      font-size: 0.62rem;
-      font-style: italic;
-      letter-spacing: 0;
-      text-transform: none;
-      opacity: 0.55;
-      margin-left: 0.35rem;
-    }
-
-    /* MOBILE FULLSCREEN MENU */
-    .mobile-menu {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 300;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .mobile-menu.open { display: flex; }
-
-    .mobile-close {
-      position: absolute;
-      top: 1.4rem; right: 1.6rem;
-      cursor: pointer;
-      font-size: 1.3rem;
-      color: var(--ink-mid);
-      background: none;
-      border: none;
-    }
-
-    .mobile-menu a {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(2.2rem, 7vw, 3.2rem);
-      letter-spacing: 0.04em;
-      color: var(--ink);
-      text-decoration: none;
-      padding: 0.55rem 2rem;
-      text-align: center;
-    }
-    .mobile-menu a.coming-soon { color: var(--ink-soft); pointer-events: none; }
-    .mobile-cs {
-      display: block;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      opacity: 0.42;
-      margin-top: -0.25rem;
-    }
-
-    /* HERO */
-    .hero {
-      min-height: 100dvh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr auto;
-      padding-top: 64px;
-    }
-
-    /* LEFT — logo + name on one line */
-    .hero-left {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 4rem 3rem 4rem 5vw;
-    }
-
-    .identity {
-      display: flex;
-      align-items: center;
-      gap: 1.4rem;
-      opacity: 0;
-      animation: fadeUp 0.85s 0.1s forwards;
-    }
-
-    .logo-wrap {
-      flex-shrink: 0;
-      width: clamp(52px, 7vw, 88px);
-    }
-    .logo-wrap img { width: 100%; display: block; }
-
-    .name {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(2rem, 3.6vw, 3.4rem);
-      letter-spacing: -0.01em;
-      line-height: 1;
-      white-space: nowrap;
-      color: var(--ink);
-    }
-
-    /* RIGHT */
-    .hero-right {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 4rem 5vw 4rem 3rem;
-      gap: 1rem;
-    }
-
-    .discipline {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: clamp(1.3rem, 2.4vw, 2.1rem);
-      white-space: nowrap;
-      color: var(--ink);
-      opacity: 0;
-      animation: fadeUp 0.85s 0.3s forwards;
-    }
-
-    .position-block {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      opacity: 0;
-      animation: fadeUp 0.85s 0.45s forwards;
-    }
-
-    .position {
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      font-size: clamp(0.74rem, 1.05vw, 0.88rem);
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      color: var(--ink-mid);
-      white-space: nowrap;
-    }
-
-    .at-line {
-      display: flex;
-      align-items: baseline;
-      gap: 0.4rem;
-      white-space: nowrap;
-    }
-    .at-sym { font-size: 0.78rem; color: var(--accent); font-weight: 500; }
-    .institution {
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 500;
-      font-size: clamp(0.84rem, 1.3vw, 1rem);
-      color: var(--ink);
-      letter-spacing: 0.02em;
-    }
-
-    /* FOOTER */
-    footer {
-      grid-column: 1 / -1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem 2rem;
-    }
-
-    .copyright {
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      font-size: 0.72rem;
-      letter-spacing: 0.07em;
-      color: var(--ink-soft);
-      opacity: 0;
-      animation: fadeUp 0.85s 0.6s forwards;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* MOBILE */
-    @media (max-width: 680px) {
-      nav { padding: 1.1rem 1.4rem; }
-
-      /* Hide landscape drawer on mobile */
-      .drawer, .drawer-overlay { display: none !important; }
-
-      .hero {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
-        min-height: 100dvh;
-        padding-top: 56px;
-      }
-
-      .hero-left {
-        justify-content: flex-end;
-        align-items: center;
-        padding: 2.5rem 1.6rem 1.6rem;
-      }
-
-      .identity {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        text-align: center;
-      }
-
-      .logo-wrap { width: clamp(64px, 18vw, 96px); }
-
-      .name {
-        font-size: clamp(2rem, 8vw, 2.8rem);
-        white-space: normal;
-        text-align: center;
-      }
-
-      .hero-right {
-        justify-content: flex-start;
-        align-items: center;
-        padding: 1.6rem 1.6rem 2.5rem;
-        text-align: center;
-      }
-
-      .discipline {
-        white-space: normal;
-        text-align: center;
-        font-size: clamp(1.2rem, 4.5vw, 1.7rem);
-      }
-
-      .position-block { align-items: center; }
-      .position { white-space: normal; text-align: center; }
-      .at-line { justify-content: center; }
-
-      footer { grid-column: 1; }
-    }
-  </style>
+  <link rel="icon" type="image/png" href="logo-bright.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <nav>
+    <div class="hamburger" onclick="openMenu()" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
 
-<!-- NAV -->
-<nav>
-  <div class="hamburger" onclick="openMenu()" aria-label="Open menu">
-    <span></span><span></span><span></span>
+  <div class="drawer-overlay" id="overlay" onclick="closeMenu()"></div>
+  <div class="drawer" id="drawer">
+    <button class="drawer-close" onclick="closeMenu()" aria-label="Close">&times;</button>
+    <a href="#">Home</a>
+    <a href="#" class="coming-soon">CV<span class="cs-tag">coming soon</span></a>
+    <a href="#" class="coming-soon">Research<span class="cs-tag">coming soon</span></a>
+    <a href="#" class="coming-soon">Gallery<span class="cs-tag">coming soon</span></a>
   </div>
-</nav>
 
-<!-- LANDSCAPE DRAWER (right side, desktop only) -->
-<div class="drawer-overlay" id="overlay" onclick="closeMenu()"></div>
-<div class="drawer" id="drawer">
-  <button class="drawer-close" onclick="closeMenu()" aria-label="Close">✕</button>
-  <a href="#">Home</a>
-  <a href="#" class="coming-soon">CV<span class="cs-tag">coming soon</span></a>
-  <a href="#" class="coming-soon">Research<span class="cs-tag">coming soon</span></a>
-  <a href="#" class="coming-soon">Gallery<span class="cs-tag">coming soon</span></a>
-</div>
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" onclick="closeMenu()" aria-label="Close">&times;</button>
+    <a href="#">Home</a>
+    <a href="#" class="coming-soon">CV<span class="mobile-cs">coming soon</span></a>
+    <a href="#" class="coming-soon">Research<span class="mobile-cs">coming soon</span></a>
+    <a href="#" class="coming-soon">Gallery<span class="mobile-cs">coming soon</span></a>
+  </div>
 
-<!-- MOBILE FULLSCREEN MENU (whole screen, mobile only) -->
-<div class="mobile-menu" id="mobileMenu">
-  <button class="mobile-close" onclick="closeMenu()" aria-label="Close">✕</button>
-  <a href="#">Home</a>
-  <a href="#" class="coming-soon">CV<span class="mobile-cs">coming soon</span></a>
-  <a href="#" class="coming-soon">Research<span class="mobile-cs">coming soon</span></a>
-  <a href="#" class="coming-soon">Gallery<span class="mobile-cs">coming soon</span></a>
-</div>
-
-<!-- HERO -->
-<main class="hero">
-
-  <section class="hero-left">
-    <div class="identity">
-      <div class="logo-wrap">
-        <img src="logo.png" alt="Tanishq Sharma" />
+  <main class="hero">
+    <section class="hero-left">
+      <div class="identity">
+        <div class="logo-wrap">
+          <img src="logo-bright.png" alt="Tanishq Sharma" />
+        </div>
+        <h1 class="name">Tanishq Sharma</h1>
       </div>
-      <h1 class="name">Tanishq Sharma</h1>
-    </div>
-  </section>
+    </section>
 
-  <section class="hero-right">
-    <p class="discipline">Particle theory and Phenomenology</p>
-    <div class="position-block">
-      <span class="position">Postdoctoral Researcher</span>
-      <div class="at-line">
-        <span class="at-sym">@</span>
-        <span class="institution">Michigan State University</span>
+    <section class="hero-right">
+      <p class="discipline">Particle Theory and Phenomenology</p>
+      <div class="position-block">
+        <span class="position">Postdoctoral Researcher</span>
+        <div class="at-line">
+          <span class="at-sym">@</span>
+          <span class="institution">Michigan State University</span>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer>
-    <p class="copyright">© 2025 Tanishq Sharma. All rights reserved.</p>
-  </footer>
+    <footer>
+      <p class="copyright">&copy; 2026 Tanishq Sharma. All rights reserved.</p>
+    </footer>
+  </main>
 
-</main>
+  <script>
+    const isMobile = () => window.innerWidth <= 680;
 
-<script>
-  const isMobile = () => window.innerWidth <= 680;
-
-  function openMenu() {
-    if (isMobile()) {
-      document.getElementById('mobileMenu').classList.add('open');
-    } else {
-      document.getElementById('drawer').classList.add('open');
-      document.getElementById('overlay').classList.add('open');
+    function openMenu() {
+      if (isMobile()) {
+        document.getElementById('mobileMenu').classList.add('open');
+      } else {
+        document.getElementById('drawer').classList.add('open');
+        document.getElementById('overlay').classList.add('open');
+      }
+      document.body.style.overflow = 'hidden';
     }
-    document.body.style.overflow = 'hidden';
-  }
 
-  function closeMenu() {
-    document.getElementById('drawer').classList.remove('open');
-    document.getElementById('overlay').classList.remove('open');
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.body.style.overflow = '';
-  }
+    function closeMenu() {
+      document.getElementById('drawer').classList.remove('open');
+      document.getElementById('overlay').classList.remove('open');
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.body.style.overflow = '';
+    }
 
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
-</script>
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeMenu();
+    });
+  </script>
 </body>
 </html>
