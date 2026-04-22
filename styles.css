@@ -16,6 +16,9 @@
   --accent: #569cd6;
   --accent-violet: #c586c0;
   --line: rgba(212, 212, 212, 0.2);
+  --scroll-track: rgba(212, 212, 212, 0.08);
+  --scroll-thumb: rgba(86, 156, 214, 0.55);
+  --scroll-thumb-hover: rgba(197, 134, 192, 0.68);
 }
 
 html,
@@ -31,6 +34,32 @@ body {
     radial-gradient(circle at 10% 5%, rgba(86, 156, 214, 0.2), transparent 38%),
     radial-gradient(circle at 90% 12%, rgba(197, 134, 192, 0.18), transparent 30%),
     linear-gradient(135deg, #20233a 0%, #252526 42%, #2a2243 100%);
+}
+
+/* Global scrollbar styling for modern, minimal dark theme consistency */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--scroll-thumb), rgba(86, 156, 214, 0.35));
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--scroll-thumb-hover), rgba(197, 134, 192, 0.45));
 }
 
 nav {
@@ -343,6 +372,251 @@ footer {
   animation: fadeUp 0.85s 0.6s forwards;
 }
 
+.page-shell {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding-top: 6.15rem;
+}
+
+.research-main {
+  width: min(980px, 100% - 3rem);
+  margin: 0 auto;
+  padding: 2rem 0 2.25rem;
+}
+
+.research-title {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 400;
+  font-size: clamp(2.1rem, 4vw, 3.2rem);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.research-subtitle {
+  color: var(--ink-mid);
+  font-size: 0.98rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 2rem;
+}
+
+.research-section + .research-section {
+  margin-top: 2rem;
+}
+
+.research-heading {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1.55rem, 2.8vw, 2rem);
+  font-weight: 400;
+  margin-bottom: 0.65rem;
+}
+
+.research-list {
+  margin-left: 1.5rem;
+}
+
+.research-list li + li {
+  margin-top: 0.8rem;
+}
+
+.research-item-title {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.research-item-meta {
+  color: var(--ink-mid);
+  font-size: 0.95rem;
+}
+
+.research-link {
+  color: var(--accent);
+  text-underline-offset: 0.18em;
+}
+
+.research-link:hover {
+  color: var(--accent-violet);
+}
+
+.research-placeholder {
+  color: var(--ink-soft);
+  font-size: 0.96rem;
+}
+
+.research-publications {
+  margin-left: 1.9rem;
+}
+
+.research-publications li + li {
+  margin-top: 1.05rem;
+}
+
+.publication-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 0.85rem;
+}
+
+.publication-name {
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 1.03rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  min-width: 0;
+}
+
+.publication-name:hover {
+  color: var(--ink-mid);
+}
+
+.cite-button {
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-self: end;
+  gap: 0.34rem;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.cite-button:hover {
+  color: var(--accent-violet);
+}
+
+.cite-button::after {
+  content: "";
+  width: 0.62rem;
+  height: 0.62rem;
+  border: 1px solid currentColor;
+  box-shadow: -2px 2px 0 -1px currentColor;
+  transform: translateY(0.02rem);
+}
+
+.publication-meta {
+  margin-top: 0.18rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  font-size: 0.95rem;
+}
+
+.publication-identifier,
+.publication-link {
+  color: var(--ink-mid);
+  text-underline-offset: 0.16em;
+}
+
+.publication-identifier:hover,
+.publication-link:hover {
+  color: var(--accent);
+}
+
+.publication-sep {
+  color: var(--ink-soft);
+}
+
+.cite-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 420;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18, 18, 20, 0.72);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.cite-modal.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.cite-modal-panel {
+  width: min(760px, calc(100% - 2rem));
+  background:
+    radial-gradient(circle at top, rgba(86, 156, 214, 0.12), transparent 34%),
+    linear-gradient(180deg, #20233a 0%, #252526 52%, #2a2243 100%);
+  border: 1px solid var(--line);
+  padding: 0.9rem 1rem 1rem;
+}
+
+.cite-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cite-modal-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.02em;
+}
+
+.cite-modal-close {
+  background: none;
+  border: none;
+  color: var(--ink-mid);
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.cite-modal-body {
+  margin-top: 0.6rem;
+}
+
+.cite-modal-bibtex {
+  margin: 0;
+  max-height: 50dvh;
+  overflow-x: auto;
+  overflow-y: auto;
+  border: 1px solid rgba(212, 212, 212, 0.14);
+  padding: 0.85rem;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--ink);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  white-space: pre;
+  word-break: normal;
+}
+
+.cite-modal-actions {
+  margin-top: 0.72rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.copy-bibtex-btn {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.34rem 0.7rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.copy-bibtex-btn:hover {
+  background: rgba(86, 156, 214, 0.18);
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -372,6 +646,15 @@ footer {
   footer {
     grid-column: 1;
     padding-bottom: 0.9rem;
+  }
+
+  .page-shell {
+    padding-top: 5.2rem;
+  }
+
+  .research-main {
+    width: min(980px, 100% - 2rem);
+    padding-top: 1.4rem;
   }
 }
 
@@ -414,6 +697,15 @@ footer {
   .discipline {
     font-size: clamp(1.2rem, 4.5vw, 1.7rem);
     white-space: normal;
+  }
+
+  .research-publications {
+    margin-left: 1.4rem;
+  }
+
+  .cite-modal-panel {
+    width: calc(100% - 1.25rem);
+    padding: 0.8rem 0.82rem 0.9rem;
   }
 
   .position-block {

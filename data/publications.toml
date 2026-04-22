@@ -1,0 +1,78 @@
+# Template entry:
+# [[publications]]
+# name_text = ""
+# name_link = ""
+# identifier_text = ""
+# identifier_link = ""
+# doi = ""
+# arxiv = ""
+# bibtex = """
+# """
+
+[[publications]]
+name_text = "Searches for long-lived particles at the future FCC-ee"
+name_link = "PDFs/fphy-10-967881.pdf"
+identifier_text = "Front.in Phys. 10 (2022) 967881"
+identifier_link = "https://www.frontiersin.org/journals/physics/articles/10.3389/fphy.2022.967881/full"
+doi = "https://doi.org/10.3389/fphy.2022.967881"
+arxiv = "2203.05502"
+bibtex = """
+@article{Blondel:2022qqo,
+    author = "Blondel, A. and others",
+    title = "{Searches for long-lived particles at the future FCC-ee}",
+    eprint = "2203.05502",
+    archivePrefix = "arXiv",
+    primaryClass = "hep-ex",
+    doi = "10.3389/fphy.2022.967881",
+    journal = "Front. in Phys.",
+    volume = "10",
+    pages = "967881",
+    year = "2022"
+}
+"""
+
+[[publications]]
+name_text = "Parton distributions confront LHC Run II data: a quantitative appraisal"
+name_link = "PDFs/JHEP07(2025)067.pdf"
+identifier_text = "JHEP 07 (2025) 067"
+identifier_link = "https://link.springer.com/article/10.1007/JHEP07(2025)067"
+doi = "https://doi.org/10.1007/JHEP07(2025)067"
+arxiv = "2501.10359"
+bibtex = """
+@article{Chiefa:2025loi,
+    author = "Chiefa, Amedeo and Costantini, Mark N. and Cruz-Martinez, Juan and Nocera, Emanuele R. and Rabemananjara, Tanjona R. and Rojo, Juan and Sharma, Tanishq and Stegeman, Roy and Ubiali, Maria",
+    title = "{Parton distributions confront LHC Run II data: a quantitative appraisal}",
+    eprint = "2501.10359",
+    archivePrefix = "arXiv",
+    primaryClass = "hep-ph",
+    reportNumber = "Nikhef 2025-002, Edinburgh 2024/10, CERN-TH-2024-169",
+    doi = "10.1007/JHEP07(2025)067",
+    journal = "JHEP",
+    volume = "07",
+    pages = "067",
+    year = "2025"
+}
+"""
+
+[[publications]]
+name_text = "NNPDFpol2.0: a global determination of polarised PDFs and their uncertainties at next-to-next-to-leading order"
+name_link = "PDFs/JHEP07(2025)168.pdf"
+identifier_text = "JHEP 07 (2025) 168"
+identifier_link = "https://link.springer.com/article/10.1007/JHEP07(2025)168"
+doi = "https://doi.org/10.1007/JHEP07(2025)168"
+arxiv = "2503.11814"
+bibtex = """
+@article{Cruz-Martinez:2025ahf,
+    author = "Cruz-Martinez, Juan and Hasenack, Toon and Hekhorn, Felix and Magni, Giacomo and Nocera, Emanuele R. and Rabemananjara, Tanjona R. and Rojo, Juan and Sharma, Tanishq and van Seeventer, Gijs",
+    title = "{NNPDFpol2.0: a global determination of polarised PDFs and their uncertainties at next-to-next-to-leading order}",
+    eprint = "2503.11814",
+    archivePrefix = "arXiv",
+    primaryClass = "hep-ph",
+    reportNumber = "CERN-TH-2025-054",
+    doi = "10.1007/JHEP07(2025)168",
+    journal = "JHEP",
+    volume = "07",
+    pages = "168",
+    year = "2025"
+}
+"""

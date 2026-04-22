@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research | Tanishq Sharma</title>
+  <link rel="icon" type="image/png" href="logo-bright.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav>
+    <div class="hamburger" onclick="openMenu()" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <div class="drawer-overlay" id="overlay" onclick="closeMenu()"></div>
+  <div class="drawer" id="drawer">
+    <button class="drawer-close" onclick="closeMenu()" aria-label="Close">&times;</button>
+    <a href="index.html">Home</a>
+    <a href="#" class="coming-soon">CV<span class="cs-tag">coming soon</span></a>
+    <a href="research.html">Research</a>
+    <a href="#" class="coming-soon">Gallery<span class="cs-tag">coming soon</span></a>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" onclick="closeMenu()" aria-label="Close">&times;</button>
+    <a href="index.html">Home</a>
+    <a href="#" class="coming-soon">CV<span class="mobile-cs">coming soon</span></a>
+    <a href="research.html">Research</a>
+    <a href="#" class="coming-soon">Gallery<span class="mobile-cs">coming soon</span></a>
+  </div>
+
+  <div class="page-shell">
+    <main class="research-main">
+      <h1 class="research-title">Research</h1>
+      <p class="research-subtitle">A curated list of research work.</p>
+
+      {{PUBLICATIONS_SECTION}}
+
+      <section class="research-section" aria-labelledby="proceedings-heading">
+        <h2 class="research-heading" id="proceedings-heading">Conference Proceedings</h2>
+        <p class="research-placeholder">Coming soon.</p>
+      </section>
+
+      <section class="research-section" aria-labelledby="thesis-heading">
+        <h2 class="research-heading" id="thesis-heading">Thesis</h2>
+        <p class="research-placeholder">Coming soon.</p>
+      </section>
+    </main>
+
+    <footer>
+      <p class="copyright">&copy; 2026 Tanishq Sharma. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <div class="cite-modal" id="citeModal" aria-hidden="true" role="dialog" aria-labelledby="citeModalTitle">
+    <div class="cite-modal-panel">
+      <div class="cite-modal-header">
+        <h3 class="cite-modal-title" id="citeModalTitle">Cite</h3>
+        <button class="cite-modal-close" type="button" aria-label="Close citation dialog" id="closeCiteModal">&times;</button>
+      </div>
+      <div class="cite-modal-body">
+        <pre class="cite-modal-bibtex" id="bibtexContent"></pre>
+      </div>
+      <div class="cite-modal-actions">
+        <button class="copy-bibtex-btn" type="button" id="copyBibtexBtn">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const isMobile = () => window.innerWidth <= 680;
+
+    function openMenu() {
+      if (isMobile()) {
+        document.getElementById("mobileMenu").classList.add("open");
+      } else {
+        document.getElementById("drawer").classList.add("open");
+        document.getElementById("overlay").classList.add("open");
+      }
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeMenu() {
+      document.getElementById("drawer").classList.remove("open");
+      document.getElementById("overlay").classList.remove("open");
+      document.getElementById("mobileMenu").classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    const citeModal = document.getElementById("citeModal");
+    const bibtexContent = document.getElementById("bibtexContent");
+    const closeCiteModalBtn = document.getElementById("closeCiteModal");
+    const copyBibtexBtn = document.getElementById("copyBibtexBtn");
+
+    function openCiteModal(bibtexText) {
+      document.getElementById("citeModalTitle").textContent = "Cite";
+      bibtexContent.textContent = bibtexText;
+      copyBibtexBtn.textContent = "Copy";
+      citeModal.classList.add("open");
+      citeModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeCiteModal() {
+      citeModal.classList.remove("open");
+      citeModal.setAttribute("aria-hidden", "true");
+      bibtexContent.textContent = "";
+      document.body.style.overflow = "";
+    }
+
+    async function copyBibtex() {
+      const bibtexText = bibtexContent.textContent;
+      if (!bibtexText) return;
+
+      try {
+        await navigator.clipboard.writeText(bibtexText);
+        copyBibtexBtn.textContent = "Copied";
+      } catch (error) {
+        const helper = document.createElement("textarea");
+        helper.value = bibtexText;
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        document.body.appendChild(helper);
+        helper.select();
+        document.execCommand("copy");
+        document.body.removeChild(helper);
+        copyBibtexBtn.textContent = "Copied";
+      }
+    }
+
+    document.addEventListener("click", e => {
+      const citeBtn = e.target.closest(".cite-button");
+      if (citeBtn) {
+        openCiteModal(citeBtn.dataset.bibtex || "");
+      }
+    });
+
+    closeCiteModalBtn.addEventListener("click", closeCiteModal);
+    copyBibtexBtn.addEventListener("click", copyBibtex);
+
+    citeModal.addEventListener("click", e => {
+      if (e.target === citeModal) closeCiteModal();
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        closeMenu();
+        closeCiteModal();
+      }
+    });
+  </script>
+</body>
+</html>
