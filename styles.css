@@ -280,6 +280,10 @@ nav {
 .logo-wrap img {
   width: 100%;
   display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
 }
 
 .name {
