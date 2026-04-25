@@ -37,16 +37,48 @@
       <h1 class="research-title">Research</h1>
       <p class="research-subtitle">A curated list of research work.</p>
 
+      {{PREPRINTS_SECTION}}
       {{PUBLICATIONS_SECTION}}
-
-      <section class="research-section" aria-labelledby="proceedings-heading">
-        <h2 class="research-heading" id="proceedings-heading">Conference Proceedings</h2>
-        <p class="research-placeholder">Coming soon.</p>
-      </section>
+      {{PROCEEDINGS_SECTION}}
 
       <section class="research-section" aria-labelledby="thesis-heading">
         <h2 class="research-heading" id="thesis-heading">Thesis</h2>
-        <p class="research-placeholder">Coming soon.</p>
+        <ol class="research-list thesis-list" reversed start="3">
+          <li>
+            <div class="publication-top">
+              <a class="publication-name" href="assets/pdfs/phd_default_version.pdf" target="_blank" rel="noopener noreferrer">
+                PhD: Towards next-gen parton distribution and fragmentation functions
+              </a>
+              <button class="cite-button" type="button" data-bibtex="@phdthesis{Sharma:2025uqu,&#10;    author = &quot;Sharma, Tanishq&quot;,&#10;    title = &quot;{Towards next-gen parton distribution and fragmentation functions}&quot;,&#10;    eprint = &quot;2509.15290&quot;,&#10;    archivePrefix = &quot;arXiv&quot;,&#10;    primaryClass = &quot;hep-ph&quot;,&#10;    school = &quot;Universit{\`a} degli Studi di Torino, Italy&quot;,&#10;    year = &quot;2025&quot;&#10;}">cite</button>
+            </div>
+            <div class="publication-meta thesis-meta">
+              <a class="publication-link" href="assets/pdfs/phd_default_version.pdf" target="_blank" rel="noopener noreferrer">default version</a>
+              <span class="publication-sep">|</span>
+              <a class="publication-link" href="assets/pdfs/phd_print_version.pdf" target="_blank" rel="noopener noreferrer">print-friendly version</a>
+            </div>
+          </li>
+          <li>
+            <div class="publication-top">
+              <a class="publication-name" href="assets/pdfs/CERN-THESIS-2022-089.pdf" target="_blank" rel="noopener noreferrer">
+                MSc: Phenomenology of Dirac and Majorana type Heavy Neutral Leptons and their searches at the FCC-ee
+              </a>
+              <button class="cite-button" type="button" data-bibtex="@mastersthesis{Sharma:2022qjf,&#10;    author = &quot;Sharma, Tanishq&quot;,&#10;    title = &quot;{Phenomenology of Dirac and Majorana type Heavy Neutral Leptons and their searches at the FCC-ee}&quot;,&#10;    school = &quot;U. Geneva (main)&quot;,&#10;    year = &quot;2022&quot;&#10;}">cite</button>
+            </div>
+            <div class="publication-meta thesis-meta">
+              <a class="publication-link" href="assets/pdfs/CERN-THESIS-2022-089.pdf" target="_blank" rel="noopener noreferrer">default version</a>
+            </div>
+          </li>
+          <li>
+            <div class="publication-top">
+              <a class="publication-name" href="assets/pdfs/MicroObservatory_Tanishq Sharma.pdf" target="_blank" rel="noopener noreferrer">
+                BSc: MicroObservatory
+              </a>
+            </div>
+            <div class="publication-meta thesis-meta">
+              <a class="publication-link" href="assets/pdfs/MicroObservatory_Tanishq Sharma.pdf" target="_blank" rel="noopener noreferrer">default version</a>
+            </div>
+          </li>
+        </ol>
       </section>
     </main>
 

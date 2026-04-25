@@ -1,0 +1,47 @@
+# Copy/paste entry templates for research TOML files.
+# Use these blocks in:
+# - data/preprints.toml
+# - data/publications.toml
+# - data/proceedings.toml
+
+==============================
+PREPRINTS ENTRY TEMPLATE
+==============================
+[[preprints]]
+name_text = ""
+name_link = ""
+arxiv = ""
+bibtex = """
+"""
+
+
+==============================
+PUBLICATIONS ENTRY TEMPLATE
+==============================
+[[publications]]
+name_text = ""
+name_link = ""
+identifier_text = ""
+identifier_link = ""
+# Optional:
+doi = ""
+# Optional:
+arxiv = ""
+bibtex = """
+"""
+
+
+==============================
+PROCEEDINGS ENTRY TEMPLATE
+==============================
+[[proceedings]]
+name_text = ""
+name_link = ""
+identifier_text = ""
+identifier_link = ""
+# Optional:
+doi = ""
+# Optional:
+arxiv = ""
+bibtex = """
+"""

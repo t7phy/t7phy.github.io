@@ -1,0 +1,21 @@
+[[proceedings]]
+name_text = "Exact NNLO corrections vs K-factors in PDF fits"
+name_link = "assets/pdfs/DIS2024_043.pdf"
+identifier_text = "PoS DIS2024 (2025) 043"
+identifier_link = "https://pos.sissa.it/469/043"
+doi = "https://doi.org/10.22323/1.469.0043"
+arxiv = "2408.10424"
+bibtex = """
+@article{Sharma:2024cnc,
+    author = "Sharma, Tanishq",
+    title = "{Exact NNLO corrections vs K-factors in PDF fits}",
+    eprint = "2408.10424",
+    archivePrefix = "arXiv",
+    primaryClass = "hep-ph",
+    doi = "10.22323/1.469.0043",
+    journal = "PoS",
+    volume = "DIS2024",
+    pages = "043",
+    year = "2025"
+}
+"""

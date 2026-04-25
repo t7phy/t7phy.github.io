@@ -455,6 +455,10 @@ footer {
   margin-top: 1.05rem;
 }
 
+.thesis-list li + li {
+  margin-top: 1.05rem;
+}
+
 .publication-top {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -473,6 +477,20 @@ footer {
 
 .publication-name:hover {
   color: var(--ink-mid);
+}
+
+/* Math inside titles: keep site font unchanged while giving LaTeX glyphs
+   an elegant math-capable serif stack close to the surrounding typography. */
+.inline-math {
+  display: inline-block;
+  vertical-align: -0.08em;
+  margin-inline: 0.04em;
+}
+
+.inline-math math {
+  font-family: "STIX Two Math", "Cambria Math", "Latin Modern Math", "Times New Roman", serif;
+  font-size: 1.02em;
+  color: currentColor;
 }
 
 .cite-button {
@@ -512,6 +530,10 @@ footer {
   flex-wrap: wrap;
   gap: 0.42rem;
   font-size: 0.95rem;
+}
+
+.thesis-meta {
+  margin-top: 0.3rem;
 }
 
 .publication-identifier,
