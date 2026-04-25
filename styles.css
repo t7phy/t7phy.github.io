@@ -7,6 +7,8 @@
 }
 
 :root {
+  --font-body: "DM Sans", sans-serif;
+  --font-display: "Cormorant Garamond", serif;
   --bg: #1e1e1e;
   --bg-soft: #252526;
   --bg-overlay: rgba(37, 37, 38, 0.95);
@@ -19,21 +21,83 @@
   --scroll-track: rgba(212, 212, 212, 0.08);
   --scroll-thumb: rgba(86, 156, 214, 0.55);
   --scroll-thumb-hover: rgba(197, 134, 192, 0.68);
+  --body-background:
+    radial-gradient(circle at 10% 5%, rgba(86, 156, 214, 0.2), transparent 38%),
+    radial-gradient(circle at 90% 12%, rgba(197, 134, 192, 0.18), transparent 30%),
+    linear-gradient(135deg, #20233a 0%, #252526 42%, #2a2243 100%);
+  --overlay-background: rgba(30, 30, 30, 0.45);
+  --drawer-background:
+    radial-gradient(circle at top, rgba(86, 156, 214, 0.2), transparent 30%),
+    linear-gradient(180deg, #20233a 0%, #252526 45%, #2a2243 100%);
+  --mobile-menu-background:
+    radial-gradient(circle at top, rgba(86, 156, 214, 0.2), transparent 30%),
+    linear-gradient(180deg, #20233a 0%, #252526 45%, #2a2243 100%);
+  --modal-overlay-background: rgba(18, 18, 20, 0.72);
+  --modal-panel-background:
+    radial-gradient(circle at top, rgba(86, 156, 214, 0.12), transparent 34%),
+    linear-gradient(180deg, #20233a 0%, #252526 52%, #2a2243 100%);
+  --code-surface: rgba(0, 0, 0, 0.2);
+  --ui-surface: rgba(255, 255, 255, 0.05);
+  --ui-surface-hover: rgba(86, 156, 214, 0.18);
+  --scroll-thumb-gradient: rgba(86, 156, 214, 0.35);
+  --scroll-thumb-hover-gradient: rgba(197, 134, 192, 0.45);
+  --nav-background: transparent;
+  --theme-toggle-border: rgba(212, 212, 212, 0.3);
+  --theme-toggle-bg: rgba(255, 255, 255, 0.05);
+  --theme-toggle-bg-hover: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="rustic"] {
+  --font-body: "Sorts Mill Goudy", "IM Fell English", serif;
+  --font-display: "IM Fell English SC", "IM Fell English", serif;
+  --bg: #fff8dc;
+  --bg-soft: #f6ecd4;
+  --bg-overlay: rgba(244, 232, 204, 0.97);
+  --ink: #2f2216;
+  --ink-mid: #3e2d1d;
+  --ink-soft: #4d3824;
+  --accent: #5e3f20;
+  --accent-violet: #412a15;
+  --line: rgba(63, 47, 31, 0.22);
+  --scroll-track: rgba(63, 47, 31, 0.12);
+  --scroll-thumb: rgba(143, 90, 43, 0.6);
+  --scroll-thumb-hover: rgba(109, 68, 32, 0.75);
+  --body-background:
+    radial-gradient(circle at 12% 7%, rgba(176, 130, 74, 0.15), transparent 33%),
+    radial-gradient(circle at 88% 10%, rgba(133, 95, 58, 0.14), transparent 31%),
+    linear-gradient(140deg, #fff8dc 0%, #f7edd1 48%, #efe2bf 100%);
+  --overlay-background: rgba(80, 60, 35, 0.24);
+  --drawer-background:
+    radial-gradient(circle at top, rgba(176, 130, 74, 0.16), transparent 32%),
+    linear-gradient(180deg, #fff8dc 0%, #f5ebd0 55%, #eadcb8 100%);
+  --mobile-menu-background:
+    radial-gradient(circle at top, rgba(176, 130, 74, 0.14), transparent 30%),
+    linear-gradient(180deg, #fff8dc 0%, #f5ebd0 52%, #eadcb8 100%);
+  --modal-overlay-background: rgba(78, 58, 32, 0.45);
+  --modal-panel-background:
+    radial-gradient(circle at top, rgba(176, 130, 74, 0.12), transparent 36%),
+    linear-gradient(180deg, #fff8dc 0%, #f6ecd3 55%, #eddfbd 100%);
+  --code-surface: rgba(255, 248, 220, 0.55);
+  --ui-surface: rgba(63, 47, 31, 0.06);
+  --ui-surface-hover: rgba(143, 90, 43, 0.16);
+  --scroll-thumb-gradient: rgba(143, 90, 43, 0.35);
+  --scroll-thumb-hover-gradient: rgba(109, 68, 32, 0.4);
+  --nav-background: rgba(255, 248, 220, 0.35);
+  --theme-toggle-border: rgba(63, 47, 31, 0.28);
+  --theme-toggle-bg: rgba(255, 248, 220, 0.46);
+  --theme-toggle-bg-hover: rgba(255, 248, 220, 0.76);
 }
 
 html,
 body {
   min-height: 100%;
   color: var(--ink);
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   overflow-x: hidden;
 }
 
 body {
-  background:
-    radial-gradient(circle at 10% 5%, rgba(86, 156, 214, 0.2), transparent 38%),
-    radial-gradient(circle at 90% 12%, rgba(197, 134, 192, 0.18), transparent 30%),
-    linear-gradient(135deg, #20233a 0%, #252526 42%, #2a2243 100%);
+  background: var(--body-background);
 }
 
 /* Global scrollbar styling for modern, minimal dark theme consistency */
@@ -52,14 +116,14 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--scroll-thumb), rgba(86, 156, 214, 0.35));
+  background: linear-gradient(180deg, var(--scroll-thumb), var(--scroll-thumb-gradient));
   border-radius: 999px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--scroll-thumb-hover), rgba(197, 134, 192, 0.45));
+  background: linear-gradient(180deg, var(--scroll-thumb-hover), var(--scroll-thumb-hover-gradient));
 }
 
 nav {
@@ -72,7 +136,44 @@ nav {
   justify-content: flex-end;
   align-items: center;
   padding: 1.3rem clamp(1.4rem, 3vw, 2.8rem);
+  background: var(--nav-background);
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--theme-toggle-border);
+  background: var(--theme-toggle-bg);
+  padding: 2px;
+}
+
+.theme-option {
   background: transparent;
+  border: 1px solid var(--theme-toggle-border);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.55rem;
+  min-width: 5.3rem;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-option:hover {
+  background: var(--theme-toggle-bg-hover);
+}
+
+.theme-option.active {
+  background: var(--theme-toggle-bg-hover);
+  border-color: var(--accent);
 }
 
 .hamburger {
@@ -100,7 +201,7 @@ nav {
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(30, 30, 30, 0.45);
+  background: var(--overlay-background);
   z-index: 200;
   opacity: 0;
   visibility: hidden;
@@ -120,9 +221,7 @@ nav {
   right: -300px;
   width: 280px;
   height: 100%;
-  background:
-    radial-gradient(circle at top, rgba(86, 156, 214, 0.2), transparent 30%),
-    linear-gradient(180deg, #20233a 0%, #252526 45%, #2a2243 100%);
+  background: var(--drawer-background);
   z-index: 300;
   padding: 4.4rem 2rem 2rem;
   display: flex;
@@ -148,7 +247,7 @@ nav {
 
 .drawer a {
   display: block;
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-display);
   font-weight: 300;
   font-size: clamp(2rem, 2.6vw, 2.45rem);
   letter-spacing: 0.04em;
@@ -166,7 +265,7 @@ nav {
 
 .cs-tag {
   display: block;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-size: 0.65rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -179,9 +278,7 @@ nav {
   display: flex;
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(circle at top, rgba(86, 156, 214, 0.2), transparent 30%),
-    linear-gradient(180deg, #20233a 0%, #252526 45%, #2a2243 100%);
+  background: var(--mobile-menu-background);
   z-index: 300;
   flex-direction: column;
   justify-content: center;
@@ -215,7 +312,7 @@ nav {
 }
 
 .mobile-menu a {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-display);
   font-weight: 300;
   font-size: clamp(2.2rem, 7vw, 3.2rem);
   letter-spacing: 0.04em;
@@ -232,7 +329,7 @@ nav {
 
 .mobile-cs {
   display: block;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-size: 0.65rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -287,7 +384,7 @@ nav {
 }
 
 .name {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-display);
   font-weight: 300;
   font-size: clamp(2.3rem, 4vw, 4rem);
   letter-spacing: -0.02em;
@@ -303,7 +400,7 @@ nav {
 }
 
 .discipline {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-display);
   font-style: italic;
   font-weight: 400;
   font-size: clamp(1.45rem, 2.6vw, 2.35rem);
@@ -325,7 +422,7 @@ nav {
 }
 
 .position {
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: clamp(0.76rem, 1.02vw, 0.92rem);
   letter-spacing: 0.16em;
@@ -349,7 +446,7 @@ nav {
 }
 
 .institution {
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: clamp(0.88rem, 1.32vw, 1.04rem);
   color: var(--ink);
@@ -367,7 +464,7 @@ footer {
 }
 
 .copyright {
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-weight: 400;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
@@ -390,7 +487,7 @@ footer {
 }
 
 .research-title {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(2.1rem, 4vw, 3.2rem);
   letter-spacing: 0.02em;
@@ -409,7 +506,7 @@ footer {
 }
 
 .research-heading {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-display);
   font-size: clamp(1.55rem, 2.8vw, 2rem);
   font-weight: 400;
   margin-bottom: 0.65rem;
@@ -502,7 +599,7 @@ footer {
   align-items: center;
   justify-self: end;
   gap: 0.34rem;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -558,7 +655,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(18, 18, 20, 0.72);
+  background: var(--modal-overlay-background);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -573,9 +670,7 @@ footer {
 
 .cite-modal-panel {
   width: min(760px, calc(100% - 2rem));
-  background:
-    radial-gradient(circle at top, rgba(86, 156, 214, 0.12), transparent 34%),
-    linear-gradient(180deg, #20233a 0%, #252526 52%, #2a2243 100%);
+  background: var(--modal-panel-background);
   border: 1px solid var(--line);
   padding: 0.9rem 1rem 1rem;
 }
@@ -588,7 +683,7 @@ footer {
 }
 
 .cite-modal-title {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-display);
   font-size: 1.3rem;
   letter-spacing: 0.02em;
 }
@@ -613,7 +708,7 @@ footer {
   overflow-y: auto;
   border: 1px solid rgba(212, 212, 212, 0.14);
   padding: 0.85rem;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--code-surface);
   color: var(--ink);
   font-family: Consolas, "Courier New", monospace;
   font-size: 0.86rem;
@@ -631,7 +726,7 @@ footer {
 .copy-bibtex-btn {
   border: 1px solid var(--line);
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--ui-surface);
   padding: 0.34rem 0.7rem;
   font-size: 0.82rem;
   letter-spacing: 0.05em;
@@ -640,7 +735,7 @@ footer {
 }
 
 .copy-bibtex-btn:hover {
-  background: rgba(86, 156, 214, 0.18);
+  background: var(--ui-surface-hover);
 }
 
 @keyframes fadeUp {
@@ -687,6 +782,13 @@ footer {
 @media (max-width: 680px) {
   nav {
     padding: 1.1rem 1.4rem;
+  }
+
+  .theme-option {
+    font-size: 0.68rem;
+    padding: 0.32rem 0.45rem;
+    letter-spacing: 0.08em;
+    min-width: 4.6rem;
   }
 
   .drawer,

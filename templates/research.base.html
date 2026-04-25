@@ -4,14 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Research | Tanishq Sharma</title>
-  <link rel="icon" type="image/png" href="assets/images/favicon-square.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("siteTheme");
+        if (saved === "elegant" || saved === "rustic") {
+          document.documentElement.setAttribute("data-theme", saved);
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <link id="siteFavicon" rel="icon" type="image/png" href="assets/images/favicon-square.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Sorts+Mill+Goudy:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <nav>
-    <div class="hamburger" onclick="openMenu()" aria-label="Open menu">
-      <span></span><span></span><span></span>
+    <div class="nav-controls">
+      <div class="theme-switch" role="group" aria-label="Theme switch">
+        <button class="theme-option" type="button" data-theme-choice="elegant" aria-pressed="true">Elegant</button>
+        <button class="theme-option" type="button" data-theme-choice="rustic" aria-pressed="false">Rustic</button>
+      </div>
+      <div class="hamburger" onclick="openMenu()" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </div>
     </div>
   </nav>
 
@@ -103,7 +119,45 @@
   </div>
 
   <script>
+    const THEME_KEY = "siteTheme";
     const isMobile = () => window.innerWidth <= 680;
+
+    function applyTheme(theme) {
+      const resolved = theme === "rustic" ? "rustic" : "elegant";
+      document.documentElement.setAttribute("data-theme", resolved);
+      const themeButtons = document.querySelectorAll(".theme-option");
+      const siteFavicon = document.getElementById("siteFavicon");
+      themeButtons.forEach(btn => {
+        const active = btn.dataset.themeChoice === resolved;
+        btn.classList.toggle("active", active);
+        btn.setAttribute("aria-pressed", String(active));
+      });
+      if (siteFavicon) {
+        siteFavicon.href = resolved === "rustic"
+          ? "assets/images/favicon-square-rustic.png"
+          : "assets/images/favicon-square.png";
+      }
+    }
+
+    function initThemeToggle() {
+      let initial = "elegant";
+      try {
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved === "rustic" || saved === "elegant") initial = saved;
+      } catch (error) {}
+
+      applyTheme(initial);
+
+      const themeButtons = document.querySelectorAll(".theme-option");
+      if (!themeButtons.length) return;
+      themeButtons.forEach(btn => btn.addEventListener("click", () => {
+        const next = btn.dataset.themeChoice === "rustic" ? "rustic" : "elegant";
+        applyTheme(next);
+        try {
+          localStorage.setItem(THEME_KEY, next);
+        } catch (error) {}
+      }));
+    }
 
     function openMenu() {
       if (isMobile()) {
@@ -183,6 +237,8 @@
         closeCiteModal();
       }
     });
+
+    initThemeToggle();
   </script>
 </body>
 </html>
