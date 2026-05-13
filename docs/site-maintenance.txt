@@ -1,0 +1,47 @@
+Site Maintenance Quick Reference
+================================
+
+We use a project-local virtual environment (`.venv`) and a requirements file (`scripts/requirements.txt`).
+
+Build Scripts
+-------------
+- `scripts/build_research.py` -> builds `research.html`
+- `scripts/build_gallery.py` -> builds `gallery.html` and `gallery-view.html`
+- `scripts/build_cv.py` -> builds `cv.html`
+
+What To Edit
+------------
+- Research data:
+  - `data/preprints.toml`
+  - `data/publications.toml`
+  - `data/proceedings.toml`
+  - starter blocks: `data/entry_templates.txt`
+
+- Gallery data:
+  - `data/gallery.toml`
+  - media files under `assets/gallery/posts/<post_slug>/...`
+
+- CV source:
+  - `data/cv.tex`
+
+Template References
+-------------------
+- Research templates:
+  - `templates/research.base.html`
+  - `templates/preprints.template.html`
+  - `templates/publications.template.html`
+  - `templates/proceedings.template.html`
+
+- Gallery templates:
+  - `templates/gallery.base.html`
+  - `templates/gallery.view.base.html`
+
+- CV template:
+  - `templates/cv.base.html`
+
+Notes
+-----
+- Research entries: append newest at bottom in TOML; page renders newest first.
+- Gallery `thumb_item` must match one of that post’s `items.file`.
+- Gallery generated thumbnails/posters are auto-managed in `assets/gallery/generated/`.
+- Global styling lives in `styles.css`.

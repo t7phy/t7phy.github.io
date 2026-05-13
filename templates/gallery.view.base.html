@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery Viewer | Tanishq Sharma</title>
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("siteTheme");
+        if (saved === "elegant" || saved === "rustic") {
+          document.documentElement.setAttribute("data-theme", saved);
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <link id="siteFavicon" rel="icon" type="image/png" href="assets/images/favicon-square.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Sorts+Mill+Goudy:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="gallery-view-page">
+  <button class="gallery-overlay-back" type="button" id="galleryBack" aria-label="Back to gallery">&#8592; Back</button>
+  <section class="gallery-feed" id="galleryFeed"></section>
+
+  <script id="galleryData" type="application/json">{{GALLERY_DATA}}</script>
+  <script>
+    const THEME_KEY = "siteTheme";
+    const MAX_DOTS = 6;
+    const isMobileView = () => window.innerWidth <= 680;
+    const raf = cb => window.requestAnimationFrame(cb);
+
+    function applyTheme(theme) {
+      const resolved = theme === "rustic" ? "rustic" : "elegant";
+      document.documentElement.setAttribute("data-theme", resolved);
+      const siteFavicon = document.getElementById("siteFavicon");
+      if (siteFavicon) {
+        siteFavicon.href = resolved === "rustic"
+          ? "assets/images/favicon-square-rustic.png"
+          : "assets/images/favicon-square.png";
+      }
+    }
+    try {
+      const saved = localStorage.getItem(THEME_KEY);
+      applyTheme(saved === "rustic" ? "rustic" : "elegant");
+    } catch (error) {
+      applyTheme("elegant");
+    }
+
+    const galleryPosts = JSON.parse(document.getElementById("galleryData").textContent);
+    const galleryFeed = document.getElementById("galleryFeed");
+    const feedStates = [];
+
+    function getVisibleDotIndices(total, active, maxDots = MAX_DOTS) {
+      if (total <= maxDots) return Array.from({ length: total }, (_, i) => i);
+      const half = Math.floor(maxDots / 2);
+      let start = active - half + 1;
+      if (start < 0) start = 0;
+      if (start > total - maxDots) start = total - maxDots;
+      return Array.from({ length: maxDots }, (_, i) => start + i);
+    }
+
+    function renderDots(state, total, active) {
+      state.dots.innerHTML = "";
+      if (total <= 1) return;
+      const visible = getVisibleDotIndices(total, active);
+      const first = visible[0];
+      const last = visible[visible.length - 1];
+      visible.forEach((itemIndex, dotPos) => {
+        const dot = document.createElement("span");
+        dot.className = "gallery-dot";
+        if (itemIndex === active) dot.classList.add("active");
+        if (total > MAX_DOTS) {
+          if (first > 0 && dotPos === 0) dot.classList.add("mini");
+          if (last < total - 1 && dotPos === visible.length - 1) dot.classList.add("mini");
+        }
+        state.dots.appendChild(dot);
+      });
+    }
+
+    function captionNeedsClamp(captionEl) {
+      const hadCollapsed = captionEl.classList.contains("collapsed");
+      captionEl.classList.remove("collapsed");
+      const fullHeight = captionEl.getBoundingClientRect().height;
+      const styles = window.getComputedStyle(captionEl);
+      const lineHeight = Number.parseFloat(styles.lineHeight || "0");
+      if (hadCollapsed) captionEl.classList.add("collapsed");
+      if (!lineHeight || Number.isNaN(lineHeight)) return false;
+      return fullHeight > (lineHeight * 3) + 2;
+    }
+
+    function syncCaptionState(state) {
+      if (!isMobileView()) {
+        state.caption.classList.remove("collapsed");
+        state.moreBtn.hidden = true;
+        state.expanded = false;
+        return;
+      }
+      if (state.expanded) {
+        state.caption.classList.remove("collapsed");
+        state.moreBtn.hidden = false;
+        state.moreBtn.textContent = "Show less";
+        return;
+      }
+      state.caption.classList.add("collapsed");
+      raf(() => {
+        const needsClamp = captionNeedsClamp(state.caption);
+        state.moreBtn.hidden = !needsClamp;
+        state.moreBtn.textContent = "Show more";
+      });
+    }
+
+    function createMediaNode(item) {
+      if (item.type === "video") {
+        const video = document.createElement("video");
+        video.className = "gallery-media";
+        video.controls = true;
+        video.playsInline = true;
+        video.preload = "metadata";
+        if (item.poster) video.poster = item.poster;
+        video.src = item.src;
+        return video;
+      }
+      const img = document.createElement("img");
+      img.className = "gallery-media";
+      img.src = item.src;
+      img.alt = item.alt || "";
+      img.draggable = false;
+      return img;
+    }
+
+    function mountMediaWithTransition(state, item, direction = 0) {
+      const oldFrame = state.stage.querySelector(".gallery-media-frame");
+      const newFrame = document.createElement("div");
+      newFrame.className = "gallery-media-frame";
+      if (direction > 0) newFrame.classList.add("enter-from-right");
+      if (direction < 0) newFrame.classList.add("enter-from-left");
+      newFrame.appendChild(createMediaNode(item));
+      state.stage.appendChild(newFrame);
+
+      if (direction === 0) {
+        if (oldFrame) oldFrame.remove();
+        return;
+      }
+
+      void newFrame.offsetWidth;
+      raf(() => {
+        if (direction > 0) newFrame.classList.remove("enter-from-right");
+        if (direction < 0) newFrame.classList.remove("enter-from-left");
+        if (oldFrame) {
+          oldFrame.classList.add(direction > 0 ? "exit-to-left" : "exit-to-right");
+          window.setTimeout(() => oldFrame.remove(), 340);
+        }
+      });
+    }
+
+    function updateFeedPost(postIndex, direction = 0) {
+      const state = feedStates[postIndex];
+      const post = galleryPosts[postIndex];
+      const item = post.items[state.itemIndex];
+      mountMediaWithTransition(state, item, direction);
+      state.date.textContent = post.date || "";
+      state.date.hidden = !post.date;
+      state.caption.textContent = post.caption || "";
+      state.prevBtn.disabled = state.itemIndex === 0;
+      state.nextBtn.disabled = state.itemIndex === post.items.length - 1;
+      renderDots(state, post.items.length, state.itemIndex);
+      state.expanded = false;
+      syncCaptionState(state);
+    }
+
+    function stepFeedItem(postIndex, direction) {
+      const state = feedStates[postIndex];
+      const max = galleryPosts[postIndex].items.length - 1;
+      const next = Math.min(Math.max(state.itemIndex + direction, 0), max);
+      if (next === state.itemIndex) return;
+      state.itemIndex = next;
+      updateFeedPost(postIndex, direction);
+    }
+
+    function buildFeed() {
+      galleryPosts.forEach((post, postIndex) => {
+        const article = document.createElement("article");
+        article.className = "gallery-feed-post";
+        article.dataset.postIndex = String(postIndex);
+
+        const mediaWrap = document.createElement("div");
+        mediaWrap.className = "gallery-feed-media-wrap";
+
+        const prevBtn = document.createElement("button");
+        prevBtn.type = "button";
+        prevBtn.className = "gallery-nav gallery-prev";
+        prevBtn.setAttribute("aria-label", "Previous item");
+        prevBtn.innerHTML = "&#8249;";
+
+        const stage = document.createElement("div");
+        stage.className = "gallery-stage";
+
+        const nextBtn = document.createElement("button");
+        nextBtn.type = "button";
+        nextBtn.className = "gallery-nav gallery-next";
+        nextBtn.setAttribute("aria-label", "Next item");
+        nextBtn.innerHTML = "&#8250;";
+
+        mediaWrap.append(prevBtn, stage, nextBtn);
+
+        const dots = document.createElement("div");
+        dots.className = "gallery-item-dots";
+
+        const captionPanel = document.createElement("aside");
+        captionPanel.className = "gallery-caption-panel";
+
+        const caption = document.createElement("div");
+        caption.className = "gallery-caption";
+
+        const moreBtn = document.createElement("button");
+        moreBtn.type = "button";
+        moreBtn.className = "gallery-caption-more";
+        moreBtn.textContent = "Show more";
+
+        const date = document.createElement("div");
+        date.className = "gallery-date";
+
+        captionPanel.append(caption, moreBtn, date);
+        article.append(mediaWrap, dots, captionPanel);
+        galleryFeed.appendChild(article);
+
+        feedStates.push({ itemIndex: 0, prevBtn, nextBtn, stage, dots, caption, moreBtn, date, expanded: false });
+        updateFeedPost(postIndex, 0);
+
+        prevBtn.addEventListener("click", () => stepFeedItem(postIndex, -1));
+        nextBtn.addEventListener("click", () => stepFeedItem(postIndex, 1));
+
+        let startX = 0;
+        let startY = 0;
+        let trackingPointer = false;
+        stage.addEventListener("pointerdown", event => {
+          if (!isMobileView()) return;
+          trackingPointer = true;
+          startX = event.clientX;
+          startY = event.clientY;
+        });
+        stage.addEventListener("pointerup", event => {
+          if (!isMobileView() || !trackingPointer) return;
+          trackingPointer = false;
+          const dx = event.clientX - startX;
+          const dy = event.clientY - startY;
+          if (Math.abs(dx) < 32 || Math.abs(dx) < Math.abs(dy)) return;
+          stepFeedItem(postIndex, dx < 0 ? 1 : -1);
+        });
+        stage.addEventListener("pointercancel", () => {
+          trackingPointer = false;
+        });
+
+        moreBtn.addEventListener("click", () => {
+          const state = feedStates[postIndex];
+          state.expanded = !state.expanded;
+          syncCaptionState(state);
+        });
+      });
+    }
+
+    buildFeed();
+
+    const params = new URLSearchParams(window.location.search);
+    const initialPost = Number(params.get("post"));
+    if (Number.isInteger(initialPost) && initialPost >= 0 && initialPost < galleryPosts.length) {
+      const target = galleryFeed.querySelector('[data-post-index="' + initialPost + '"]');
+      if (target) target.scrollIntoView({ block: "start", behavior: "auto" });
+    }
+
+    document.getElementById("galleryBack").addEventListener("click", () => {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "gallery.html";
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      feedStates.forEach(state => syncCaptionState(state));
+    });
+  </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tanishq Sharma</title>
+  <title>Gallery | Tanishq Sharma</title>
   <script>
     (() => {
       try {
@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Sorts+Mill+Goudy:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-  <body>
+<body>
   <nav>
     <div class="nav-controls">
       <div class="theme-switch" role="group" aria-label="Theme switch">
@@ -48,32 +48,22 @@
     <a href="gallery.html">Gallery</a>
   </div>
 
-  <main class="hero">
-    <section class="hero-left">
-      <div class="identity">
-        <div class="logo-wrap">
-          <img id="homeLogo" src="assets/images/logo-bright.png" alt="Tanishq Sharma" draggable="false" />
-        </div>
-        <h1 class="name">Tanishq Sharma</h1>
-      </div>
-    </section>
+  <div class="page-shell">
+    <main class="research-main gallery-main">
+      <h1 class="research-title">Gallery</h1>
+      <div class="page-title-rule" aria-hidden="true"></div>
 
-    <section class="hero-right">
-      <p class="discipline">Particle Theory and Phenomenology</p>
-      <div class="position-block">
-        <span class="position">Postdoctoral Researcher</span>
-        <div class="at-line">
-          <span class="at-sym">@</span>
-          <span class="institution">Michigan State University</span>
-        </div>
-      </div>
-    </section>
+      <section class="gallery-grid" id="galleryGrid" aria-label="Gallery posts">
+        {{GALLERY_CARDS}}
+      </section>
+    </main>
 
     <footer>
       <p class="copyright">&copy; 2026 Tanishq Sharma</p>
     </footer>
-  </main>
+  </div>
 
+  <script id="galleryData" type="application/json">{{GALLERY_DATA}}</script>
   <script>
     const THEME_KEY = "siteTheme";
     const isMobile = () => window.innerWidth <= 680;
@@ -82,18 +72,12 @@
       const resolved = theme === "rustic" ? "rustic" : "elegant";
       document.documentElement.setAttribute("data-theme", resolved);
       const themeButtons = document.querySelectorAll(".theme-option");
-      const homeLogo = document.getElementById("homeLogo");
       const siteFavicon = document.getElementById("siteFavicon");
       themeButtons.forEach(btn => {
         const active = btn.dataset.themeChoice === resolved;
         btn.classList.toggle("active", active);
         btn.setAttribute("aria-pressed", String(active));
       });
-      if (homeLogo) {
-        homeLogo.src = resolved === "rustic"
-          ? "assets/images/logo.png"
-          : "assets/images/logo-bright.png";
-      }
       if (siteFavicon) {
         siteFavicon.href = resolved === "rustic"
           ? "assets/images/favicon-square-rustic.png"
@@ -123,23 +107,34 @@
 
     function openMenu() {
       if (isMobile()) {
-        document.getElementById('mobileMenu').classList.add('open');
+        document.getElementById("mobileMenu").classList.add("open");
       } else {
-        document.getElementById('drawer').classList.add('open');
-        document.getElementById('overlay').classList.add('open');
+        document.getElementById("drawer").classList.add("open");
+        document.getElementById("overlay").classList.add("open");
       }
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     }
 
     function closeMenu() {
-      document.getElementById('drawer').classList.remove('open');
-      document.getElementById('overlay').classList.remove('open');
-      document.getElementById('mobileMenu').classList.remove('open');
-      document.body.style.overflow = '';
+      document.getElementById("drawer").classList.remove("open");
+      document.getElementById("overlay").classList.remove("open");
+      document.getElementById("mobileMenu").classList.remove("open");
+      document.body.style.overflow = "";
     }
 
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeMenu();
+    const galleryPosts = JSON.parse(document.getElementById("galleryData").textContent);
+
+    document.getElementById("galleryGrid").addEventListener("click", event => {
+      const card = event.target.closest(".gallery-card");
+      if (!card) return;
+      const postIndex = Number(card.dataset.postIndex);
+      window.location.href = "gallery-view.html?post=" + postIndex;
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeMenu();
+      }
     });
 
     initThemeToggle();

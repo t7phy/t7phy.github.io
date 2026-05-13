@@ -1,0 +1,81 @@
+[[posts]]
+slug = "post_single_image"
+caption = "Single image post sample."
+thumb_item = "photo_a.jpg"
+thumb_mode = "crop"
+
+[[posts.items]]
+file = "photo_a.jpg"
+alt = "Single image sample"
+
+[[posts]]
+slug = "post_multi_image"
+caption = "Multi-image post sample."
+thumb_item = "photo_b.jpg"
+thumb_mode = "contain"
+
+[[posts.items]]
+file = "photo_a.jpg"
+alt = "Multi image A"
+
+[[posts.items]]
+file = "photo_b.jpg"
+alt = "Multi image B"
+
+[[posts.items]]
+file = "photo_c.jpg"
+alt = "Multi image C"
+
+[[posts]]
+slug = "post_mixed_media"
+caption = "Mixed media post sample."
+thumb_item = "clip_a.mp4"
+thumb_mode = "crop"
+
+[[posts.items]]
+file = "photo_a.jpg"
+alt = "Mixed post image A"
+
+[[posts.items]]
+file = "clip_a.mp4"
+alt = "Mixed post clip"
+
+[[posts.items]]
+file = "photo_b.jpg"
+alt = "Mixed post image B"
+
+[[posts]]
+slug = "post_video_only"
+caption = "Video-only post sample."
+thumb_item = "clip_a.mp4"
+thumb_mode = "contain"
+
+[[posts.items]]
+file = "clip_a.mp4"
+alt = "Video only clip A"
+
+[[posts.items]]
+file = "clip_b.mp4"
+alt = "Video only clip B"
+
+[[posts]]
+slug = "post_web_images"
+caption = "Pexels image samples with a deliberately long caption for mobile behavior testing. This text is intentionally extended across multiple phrases so it exceeds the three-line clamp and triggers the Show more control. It should expand smoothly, remain readable, and collapse back when Show less is clicked."
+thumb_item = "photo_1.jpg"
+thumb_mode = "crop"
+
+[[posts.items]]
+file = "photo_1.jpg"
+alt = "Pexels image sample 1"
+
+[[posts.items]]
+file = "photo_2.jpg"
+alt = "Pexels image sample 2"
+
+[[posts.items]]
+file = "photo_3.jpg"
+alt = "Pexels image sample 3"
+
+[[posts.items]]
+file = "photo_4.jpg"
+alt = "Pexels image sample 4"
