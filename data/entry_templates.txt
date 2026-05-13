@@ -45,3 +45,32 @@ doi = ""
 arxiv = ""
 bibtex = """
 """
+
+
+==============================
+GALLERY POST ENTRY TEMPLATE
+==============================
+[[posts]]
+slug = ""
+caption = ""
+# Optional:
+date = ""
+thumb_item = ""
+thumb_mode = "crop" # or "contain"
+items = [
+  { file = "" }
+]
+
+# Example with mixed media and optional video default play mode:
+[[posts]]
+slug = ""
+caption = ""
+# Optional:
+date = ""
+thumb_item = ""
+thumb_mode = "contain" # or "crop"
+items = [
+  { file = "photo_a.jpg" },
+  { file = "clip_a.mp4", play = "play" },  # "play" or "pause"
+  { file = "photo_b.jpg" }
+]
