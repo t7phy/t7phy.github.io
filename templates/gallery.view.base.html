@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="gallery-view-page">
-  <button class="gallery-overlay-back" type="button" id="galleryBack" aria-label="Back to gallery">&#8592; Back</button>
+  <button class="gallery-overlay-back" type="button" id="galleryBack" aria-label="Back to gallery">&#8592;&nbsp;&nbsp;&nbsp;Gallery</button>
   <section class="gallery-feed" id="galleryFeed"></section>
 
   <script id="galleryData" type="application/json">{{GALLERY_DATA}}</script>
@@ -111,14 +111,75 @@
 
     function createMediaNode(item) {
       if (item.type === "video") {
+        const shell = document.createElement("div");
+        shell.className = "gallery-video-shell";
+
         const video = document.createElement("video");
-        video.className = "gallery-media";
-        video.controls = true;
+        video.className = "gallery-media gallery-media-video";
         video.playsInline = true;
         video.preload = "metadata";
+        video.loop = true;
+        video.muted = true;
         if (item.poster) video.poster = item.poster;
         video.src = item.src;
-        return video;
+        const desktopMode = !isMobileView();
+        if (item.autoplay || isMobileView()) {
+          video.autoplay = true;
+        }
+
+        const playBtn = document.createElement("button");
+        playBtn.type = "button";
+        playBtn.className = "gallery-video-play";
+        playBtn.setAttribute("aria-label", "Play or pause video");
+        playBtn.textContent = "▶";
+
+        const muteBtn = document.createElement("button");
+        muteBtn.type = "button";
+        muteBtn.className = "gallery-video-mute";
+        muteBtn.setAttribute("aria-label", "Mute or unmute video");
+        muteBtn.textContent = "🔇";
+
+        const syncButtons = () => {
+          playBtn.classList.toggle("hidden", !video.paused && !video.ended);
+          muteBtn.textContent = video.muted ? "🔇" : "🔊";
+        };
+        const togglePlay = () => {
+          if (video.paused) {
+            const p = video.play();
+            if (p && typeof p.catch === "function") p.catch(() => {});
+          } else {
+            video.pause();
+          }
+          syncButtons();
+        };
+
+        if (desktopMode) {
+          playBtn.addEventListener("click", event => {
+            event.stopPropagation();
+            togglePlay();
+          });
+          video.addEventListener("click", event => {
+            event.stopPropagation();
+            togglePlay();
+          });
+        } else {
+          playBtn.hidden = true;
+          playBtn.classList.add("hidden");
+        }
+
+        muteBtn.addEventListener("click", event => {
+          event.stopPropagation();
+          video.muted = !video.muted;
+          syncButtons();
+        });
+
+        video.addEventListener("play", syncButtons);
+        video.addEventListener("pause", syncButtons);
+        video.addEventListener("ended", syncButtons);
+        syncButtons();
+
+        shell.append(video, playBtn, muteBtn);
+        return shell;
       }
       const img = document.createElement("img");
       img.className = "gallery-media";
@@ -128,41 +189,138 @@
       return img;
     }
 
-    function mountMediaWithTransition(state, item, direction = 0) {
-      const oldFrame = state.stage.querySelector(".gallery-media-frame");
+    function createFrame(item, itemIndex) {
       const newFrame = document.createElement("div");
       newFrame.className = "gallery-media-frame";
-      if (direction > 0) newFrame.classList.add("enter-from-right");
-      if (direction < 0) newFrame.classList.add("enter-from-left");
-      newFrame.appendChild(createMediaNode(item));
+      newFrame.dataset.itemIndex = String(itemIndex);
+      if (item.type === "video") {
+        newFrame.dataset.videoAutoplay = (item.autoplay || isMobileView()) ? "1" : "0";
+      }
+      const mediaNode = createMediaNode(item);
+      newFrame.append(mediaNode);
+      return newFrame;
+    }
+
+    function adjustMobileStageForFrame(state, frame) {
+      if (!isMobileView()) {
+        state.stage.style.height = "";
+        state.stage.style.maxHeight = "";
+        return;
+      }
+      const media = frame ? frame.querySelector("img,video") : null;
+      if (!media) return;
+      const apply = () => {
+        const naturalW = media.tagName.toLowerCase() === "video" ? media.videoWidth : media.naturalWidth;
+        const naturalH = media.tagName.toLowerCase() === "video" ? media.videoHeight : media.naturalHeight;
+        if (!naturalW || !naturalH) return;
+        const stageWidth = state.stage.clientWidth || Math.max(1, window.innerWidth - 16);
+        const maxH = Math.max(200, window.innerHeight - 320);
+        const target = Math.min(maxH, stageWidth * (naturalH / naturalW));
+        const px = `${Math.round(target)}px`;
+        state.stage.style.height = px;
+        state.stage.style.maxHeight = px;
+      };
+      const ready = media.tagName.toLowerCase() === "video"
+        ? (media.videoWidth > 0 && media.videoHeight > 0)
+        : (media.naturalWidth > 0 && media.naturalHeight > 0);
+      if (ready) {
+        apply();
+      } else {
+        const evt = media.tagName.toLowerCase() === "video" ? "loadedmetadata" : "load";
+        media.addEventListener(evt, apply, { once: true });
+      }
+    }
+
+    function syncVideoPlaybackForState(state) {
+      const frames = state.stage.querySelectorAll(".gallery-media-frame");
+      frames.forEach(frame => {
+        const video = frame.querySelector("video");
+        if (!video) return;
+        const canPlay = frame.classList.contains("current") && frame.dataset.videoAutoplay === "1";
+        if (canPlay) {
+          const p = video.play();
+          if (p && typeof p.catch === "function") p.catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    }
+
+    function pauseAllVideos(state) {
+      const frames = state.stage.querySelectorAll(".gallery-media-frame");
+      frames.forEach(frame => {
+        const video = frame.querySelector("video");
+        if (video) video.pause();
+      });
+    }
+
+    function setTranslateX(frame, valuePx, animate = true) {
+      frame.style.transition = animate ? "" : "none";
+      frame.style.transform = `translateX(${valuePx}px)`;
+    }
+
+    function mountMediaWithTransition(state, item, itemIndex, direction = 0) {
+      const oldFrame = state.stage.querySelector(".gallery-media-frame.current");
+      const newFrame = createFrame(item, itemIndex);
+      newFrame.classList.add("current");
       state.stage.appendChild(newFrame);
 
-      if (direction === 0) {
+      if (!oldFrame || direction === 0) {
         if (oldFrame) oldFrame.remove();
+        setTranslateX(newFrame, 0, false);
+        syncVideoPlaybackForState(state);
         return;
       }
 
-      void newFrame.offsetWidth;
+      const width = state.stage.clientWidth || 1;
+      const startX = direction > 0 ? width : -width;
+      setTranslateX(newFrame, startX, false);
       raf(() => {
-        if (direction > 0) newFrame.classList.remove("enter-from-right");
-        if (direction < 0) newFrame.classList.remove("enter-from-left");
-        if (oldFrame) {
-          oldFrame.classList.add(direction > 0 ? "exit-to-left" : "exit-to-right");
-          window.setTimeout(() => oldFrame.remove(), 340);
-        }
+        setTranslateX(newFrame, 0, true);
+        setTranslateX(oldFrame, -startX, true);
       });
+      window.setTimeout(() => {
+        oldFrame.remove();
+        syncVideoPlaybackForState(state);
+      }, 340);
+    }
+
+    function ensureAdjacentFrame(state, direction) {
+      const post = galleryPosts[state.postIndex];
+      const targetIndex = state.itemIndex + direction;
+      if (targetIndex < 0 || targetIndex >= post.items.length) return null;
+      const existing = state.stage.querySelector(`.gallery-media-frame[data-item-index="${targetIndex}"]`);
+      if (existing) return existing;
+      const frame = createFrame(post.items[targetIndex], targetIndex);
+      state.stage.appendChild(frame);
+      const width = state.stage.clientWidth || 1;
+      setTranslateX(frame, direction > 0 ? width : -width, false);
+      return frame;
     }
 
     function updateFeedPost(postIndex, direction = 0) {
       const state = feedStates[postIndex];
       const post = galleryPosts[postIndex];
       const item = post.items[state.itemIndex];
-      mountMediaWithTransition(state, item, direction);
+      const currentFrame = state.stage.querySelector(".gallery-media-frame.current");
+      const mountedIndex = currentFrame ? Number(currentFrame.dataset.itemIndex) : -1;
+      const needsRemount = direction !== 0 || mountedIndex !== state.itemIndex;
+      if (needsRemount) {
+        mountMediaWithTransition(state, item, state.itemIndex, direction);
+      } else {
+        syncVideoPlaybackForState(state);
+      }
+      const activeFrame = state.stage.querySelector(".gallery-media-frame.current");
+      if (activeFrame) adjustMobileStageForFrame(state, activeFrame);
       state.date.textContent = post.date || "";
       state.date.hidden = !post.date;
       state.caption.textContent = post.caption || "";
       state.prevBtn.disabled = state.itemIndex === 0;
       state.nextBtn.disabled = state.itemIndex === post.items.length - 1;
+      state.prevBtn.classList.toggle("hidden", state.itemIndex === 0);
+      state.nextBtn.classList.toggle("hidden", state.itemIndex === post.items.length - 1);
+      state.counter.hidden = post.items.length <= 1;
+      state.counter.textContent = `${state.itemIndex + 1}/${post.items.length}`;
       renderDots(state, post.items.length, state.itemIndex);
       state.expanded = false;
       syncCaptionState(state);
@@ -205,6 +363,9 @@
 
         const dots = document.createElement("div");
         dots.className = "gallery-item-dots";
+        const counter = document.createElement("div");
+        counter.className = "gallery-item-counter";
+        counter.hidden = true;
 
         const captionPanel = document.createElement("aside");
         captionPanel.className = "gallery-caption-panel";
@@ -221,10 +382,10 @@
         date.className = "gallery-date";
 
         captionPanel.append(caption, moreBtn, date);
-        article.append(mediaWrap, dots, captionPanel);
+        article.append(mediaWrap, counter, dots, captionPanel);
         galleryFeed.appendChild(article);
 
-        feedStates.push({ itemIndex: 0, prevBtn, nextBtn, stage, dots, caption, moreBtn, date, expanded: false });
+        feedStates.push({ postIndex, itemIndex: 0, prevBtn, nextBtn, stage, counter, dots, caption, moreBtn, date, expanded: false });
         updateFeedPost(postIndex, 0);
 
         prevBtn.addEventListener("click", () => stepFeedItem(postIndex, -1));
@@ -233,22 +394,145 @@
         let startX = 0;
         let startY = 0;
         let trackingPointer = false;
+        let draggingCarousel = false;
+        let dragDx = 0;
+        let dragDirection = 0;
+        let dragNeighbor = null;
+        let pointerId = null;
+        let startTime = 0;
+        let lastMoveTime = 0;
+        let lastMoveX = 0;
+        let velocityX = 0;
         stage.addEventListener("pointerdown", event => {
           if (!isMobileView()) return;
+          if (event.target.closest(".gallery-video-play") || event.target.closest(".gallery-video-mute")) return;
           trackingPointer = true;
+          draggingCarousel = false;
+          pointerId = event.pointerId;
+          stage.setPointerCapture(pointerId);
           startX = event.clientX;
           startY = event.clientY;
+          startTime = performance.now();
+          lastMoveTime = startTime;
+          lastMoveX = startX;
+          velocityX = 0;
+          dragDx = 0;
+          dragDirection = 0;
+          dragNeighbor = null;
+        });
+        stage.addEventListener("pointermove", event => {
+          if (!isMobileView() || !trackingPointer) return;
+          const dx = event.clientX - startX;
+          const dy = event.clientY - startY;
+          if (!draggingCarousel) {
+            if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+            if (Math.abs(dx) <= Math.abs(dy)) {
+              trackingPointer = false;
+              if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
+              pointerId = null;
+              return;
+            }
+            draggingCarousel = true;
+          }
+          event.preventDefault();
+          dragDx = dx;
+          const now = performance.now();
+          const dt = Math.max(1, now - lastMoveTime);
+          velocityX = (event.clientX - lastMoveX) / dt;
+          lastMoveTime = now;
+          lastMoveX = event.clientX;
+          const candidateDirection = dx < 0 ? 1 : -1;
+          if (candidateDirection !== dragDirection) {
+            dragDirection = candidateDirection;
+            dragNeighbor = ensureAdjacentFrame(feedStates[postIndex], dragDirection);
+          }
+          const state = feedStates[postIndex];
+          const current = state.stage.querySelector(".gallery-media-frame.current");
+          if (!current) return;
+          pauseAllVideos(state);
+          const width = state.stage.clientWidth || 1;
+          const clampedDx = Math.max(-width, Math.min(width, dx));
+          setTranslateX(current, clampedDx, false);
+          if (dragNeighbor) {
+            const offset = dragDirection > 0 ? width : -width;
+            setTranslateX(dragNeighbor, clampedDx + offset, false);
+          }
         });
         stage.addEventListener("pointerup", event => {
           if (!isMobileView() || !trackingPointer) return;
           trackingPointer = false;
-          const dx = event.clientX - startX;
-          const dy = event.clientY - startY;
-          if (Math.abs(dx) < 32 || Math.abs(dx) < Math.abs(dy)) return;
-          stepFeedItem(postIndex, dx < 0 ? 1 : -1);
+          if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
+          pointerId = null;
+          const state = feedStates[postIndex];
+          const current = state.stage.querySelector(".gallery-media-frame.current");
+          if (!current) return;
+          const width = state.stage.clientWidth || 1;
+          const travelRatio = Math.abs(dragDx) / width;
+          const elapsed = Math.max(1, performance.now() - startTime);
+          const avgVelocityX = dragDx / elapsed;
+          const flickVelocity = Math.abs(velocityX) > 0.85 || Math.abs(avgVelocityX) > 0.75;
+          const distancePass = travelRatio >= 0.38;
+          const shouldAdvance = draggingCarousel && dragNeighbor && (distancePass || flickVelocity);
+          if (shouldAdvance) {
+            const advanceDir = dragDirection;
+            const finalOut = advanceDir > 0 ? -width : width;
+            setTranslateX(current, finalOut, true);
+            setTranslateX(dragNeighbor, 0, true);
+            current.classList.remove("current");
+            dragNeighbor.classList.add("current");
+            const newIndex = state.itemIndex + advanceDir;
+            window.setTimeout(() => {
+              current.remove();
+              state.itemIndex = newIndex;
+              state.stage.querySelectorAll(".gallery-media-frame").forEach(frame => {
+                if (!frame.classList.contains("current")) frame.remove();
+              });
+              updateFeedPost(postIndex, 0);
+            }, 340);
+          } else {
+            setTranslateX(current, 0, true);
+            if (dragNeighbor) {
+              const backTo = dragDirection > 0 ? width : -width;
+              setTranslateX(dragNeighbor, backTo, true);
+              window.setTimeout(() => {
+                dragNeighbor.remove();
+                syncVideoPlaybackForState(state);
+              }, 340);
+            } else {
+              window.setTimeout(() => {
+                syncVideoPlaybackForState(state);
+              }, 340);
+            }
+          }
+          draggingCarousel = false;
+          dragNeighbor = null;
+          dragDirection = 0;
+          dragDx = 0;
         });
         stage.addEventListener("pointercancel", () => {
           trackingPointer = false;
+          draggingCarousel = false;
+          const state = feedStates[postIndex];
+          const current = state.stage.querySelector(".gallery-media-frame.current");
+          if (current) setTranslateX(current, 0, true);
+          if (dragNeighbor) {
+            const width = state.stage.clientWidth || 1;
+            const backTo = dragDirection > 0 ? width : -width;
+            setTranslateX(dragNeighbor, backTo, true);
+            window.setTimeout(() => {
+              dragNeighbor.remove();
+              syncVideoPlaybackForState(state);
+            }, 340);
+          } else {
+            window.setTimeout(() => {
+              syncVideoPlaybackForState(state);
+            }, 340);
+          }
+          dragNeighbor = null;
+          dragDirection = 0;
+          dragDx = 0;
+          if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
+          pointerId = null;
         });
 
         moreBtn.addEventListener("click", () => {
@@ -277,7 +561,11 @@
     });
 
     window.addEventListener("resize", () => {
-      feedStates.forEach(state => syncCaptionState(state));
+      feedStates.forEach(state => {
+        syncCaptionState(state);
+        const currentFrame = state.stage.querySelector(".gallery-media-frame.current");
+        if (currentFrame) adjustMobileStageForFrame(state, currentFrame);
+      });
     });
   </script>
 </body>

@@ -34,6 +34,7 @@ class MediaItem:
     src: str
     alt: str
     poster: str | None = None
+    autoplay: bool = False
 
 
 @dataclass(frozen=True)
@@ -109,9 +110,11 @@ def _to_web(path: Path) -> str:
 def _render_cards(posts: list[GalleryPost]) -> str:
     cards: list[str] = []
     for index, post in enumerate(posts):
+        multi_icon = '<span class="gallery-card-multi" aria-hidden="true"></span>' if len(post.items) > 1 else ""
         cards.append(
             (
                 f'<article class="gallery-card" data-post-index="{index}">'
+                f"{multi_icon}"
                 f'<img src="{escape(post.thumb)}" alt="Gallery post {index + 1}" loading="lazy" decoding="async" />'
                 "</article>"
             )
@@ -134,7 +137,7 @@ def build() -> None:
     keep_posters: set[Path] = set()
     posts: list[GalleryPost] = []
 
-    for index, raw in enumerate(posts_raw, start=1):
+    for index, raw in enumerate(reversed(posts_raw), start=1):
         slug = _req(raw.get("slug"), f"posts[{index}].slug")
         caption = _req(raw.get("caption"), f"posts[{index}].caption")
         date_raw = raw.get("date")
@@ -171,6 +174,10 @@ def build() -> None:
                 _build_poster(media_path, poster_path)
                 keep_posters.add(poster_path)
                 poster_web = _to_web(poster_path)
+                play_mode = item_raw.get("play")
+                autoplay = isinstance(play_mode, str) and play_mode.strip().lower() == "play"
+            else:
+                autoplay = False
 
             media_items.append(
                 MediaItem(
@@ -178,6 +185,7 @@ def build() -> None:
                     src=_to_web(media_path),
                     alt=alt_text,
                     poster=poster_web,
+                    autoplay=autoplay,
                 )
             )
 
@@ -217,6 +225,7 @@ def build() -> None:
             "thumb": post.thumb,
             "items": [
                 {"type": item.type, "src": item.src, "alt": item.alt, "poster": item.poster}
+                | {"autoplay": item.autoplay}
                 for item in post.items
             ],
         }

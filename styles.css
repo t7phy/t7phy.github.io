@@ -760,6 +760,28 @@ footer {
   overflow: hidden;
   aspect-ratio: 1 / 1;
   background: var(--bg-soft);
+  position: relative;
+}
+
+.gallery-card-multi {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  opacity: 0.95;
+  z-index: 2;
+}
+
+.gallery-card-multi::before {
+  content: "";
+  position: absolute;
+  left: -0.28rem;
+  top: 0.2rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.65);
 }
 
 .gallery-card img {
@@ -791,18 +813,22 @@ html[data-theme="rustic"] .gallery-view-page {
   left: 0.8rem;
   z-index: 10;
   border: none;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.28);
   color: inherit;
   font-family: var(--font-body);
   font-size: 1.05rem;
   letter-spacing: 0.02em;
-  padding: 0.2rem 0.3rem;
+  padding: 0.28rem 0.52rem;
   cursor: pointer;
   opacity: 0.9;
 }
 
 .gallery-overlay-back:hover {
   opacity: 1;
+}
+
+html[data-theme="rustic"] .gallery-overlay-back {
+  background: rgba(255, 255, 255, 0.62);
 }
 
 .gallery-feed {
@@ -869,6 +895,25 @@ html[data-theme="rustic"] .gallery-view-page {
   opacity: 0.85;
 }
 
+.gallery-item-counter {
+  grid-area: media;
+  justify-self: end;
+  align-self: start;
+  margin: 0.5rem 0.6rem 0 0;
+  padding: 0.14rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.38);
+  color: #fff;
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  z-index: 4;
+}
+
+html[data-theme="rustic"] .gallery-item-counter {
+  background: rgba(255, 255, 255, 0.62);
+  color: #1f1610;
+}
+
 .gallery-nav {
   border: none;
   background: transparent;
@@ -887,6 +932,11 @@ html[data-theme="rustic"] .gallery-view-page {
 .gallery-nav:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.gallery-nav.hidden {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .gallery-stage {
@@ -912,6 +962,53 @@ html[data-theme="rustic"] .gallery-view-page {
   user-select: none;
 }
 
+.gallery-video-shell {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-media-video {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.gallery-video-play,
+.gallery-video-mute {
+  position: absolute;
+  border: none;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.36);
+  cursor: pointer;
+}
+
+.gallery-video-play {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  font-size: 1.18rem;
+}
+
+.gallery-video-play.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gallery-video-mute {
+  right: 0.55rem;
+  bottom: 0.55rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+}
+
 .gallery-media-frame {
   position: absolute;
   inset: 0;
@@ -921,6 +1018,7 @@ html[data-theme="rustic"] .gallery-view-page {
   transform: translateX(0);
   transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
+
 
 .gallery-media-frame.enter-from-right {
   transform: translateX(100%);
@@ -1161,12 +1259,13 @@ video.gallery-media {
   .gallery-feed {
     width: calc(100% - 0.7rem);
     margin-top: 3.15rem;
+    gap: 1rem;
   }
 
   .gallery-feed-post {
     padding: 0.5rem;
-    height: calc(100dvh - 4rem);
-    max-height: calc(100dvh - 4rem);
+    height: auto;
+    max-height: none;
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
     grid-template-areas:
@@ -1200,15 +1299,15 @@ video.gallery-media {
   }
 
   .gallery-stage {
-    height: min(62dvh, calc(100dvh - 13rem));
-    max-height: min(62dvh, calc(100dvh - 13rem));
-    min-height: 220px;
+    height: min(calc(100vw - 1rem), calc(100dvh - 18rem));
+    max-height: min(calc(100vw - 1rem), calc(100dvh - 18rem));
+    min-height: 200px;
   }
 
   .gallery-feed-media-wrap {
     grid-template-columns: 1fr;
     height: auto;
-    align-items: center;
+    align-items: start;
   }
 
   .gallery-nav {
@@ -1221,6 +1320,12 @@ video.gallery-media {
 
   .gallery-media {
     max-height: 100%;
+    max-width: 100%;
+  }
+
+  .gallery-video-shell {
+    width: 100%;
+    height: 100%;
   }
 
   .gallery-nav {
