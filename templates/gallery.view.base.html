@@ -19,7 +19,9 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="gallery-view-page">
-  <button class="gallery-overlay-back" type="button" id="galleryBack" aria-label="Back to gallery">&#8592;&nbsp;&nbsp;&nbsp;Gallery</button>
+  <header class="gallery-topbar">
+    <button class="gallery-overlay-back" type="button" id="galleryBack" aria-label="Back to gallery">&#8592;&nbsp;&nbsp;&nbsp;Gallery</button>
+  </header>
   <section class="gallery-feed" id="galleryFeed"></section>
 
   <script id="galleryData" type="application/json">{{GALLERY_DATA}}</script>
@@ -201,36 +203,6 @@
       return newFrame;
     }
 
-    function adjustMobileStageForFrame(state, frame) {
-      if (!isMobileView()) {
-        state.stage.style.height = "";
-        state.stage.style.maxHeight = "";
-        return;
-      }
-      const media = frame ? frame.querySelector("img,video") : null;
-      if (!media) return;
-      const apply = () => {
-        const naturalW = media.tagName.toLowerCase() === "video" ? media.videoWidth : media.naturalWidth;
-        const naturalH = media.tagName.toLowerCase() === "video" ? media.videoHeight : media.naturalHeight;
-        if (!naturalW || !naturalH) return;
-        const stageWidth = state.stage.clientWidth || Math.max(1, window.innerWidth - 16);
-        const maxH = Math.max(200, window.innerHeight - 320);
-        const target = Math.min(maxH, stageWidth * (naturalH / naturalW));
-        const px = `${Math.round(target)}px`;
-        state.stage.style.height = px;
-        state.stage.style.maxHeight = px;
-      };
-      const ready = media.tagName.toLowerCase() === "video"
-        ? (media.videoWidth > 0 && media.videoHeight > 0)
-        : (media.naturalWidth > 0 && media.naturalHeight > 0);
-      if (ready) {
-        apply();
-      } else {
-        const evt = media.tagName.toLowerCase() === "video" ? "loadedmetadata" : "load";
-        media.addEventListener(evt, apply, { once: true });
-      }
-    }
-
     function syncVideoPlaybackForState(state) {
       const frames = state.stage.querySelectorAll(".gallery-media-frame");
       frames.forEach(frame => {
@@ -310,8 +282,6 @@
       } else {
         syncVideoPlaybackForState(state);
       }
-      const activeFrame = state.stage.querySelector(".gallery-media-frame.current");
-      if (activeFrame) adjustMobileStageForFrame(state, activeFrame);
       state.date.textContent = post.date || "";
       state.date.hidden = !post.date;
       state.caption.textContent = post.caption || "";
@@ -563,8 +533,6 @@
     window.addEventListener("resize", () => {
       feedStates.forEach(state => {
         syncCaptionState(state);
-        const currentFrame = state.stage.querySelector(".gallery-media-frame.current");
-        if (currentFrame) adjustMobileStageForFrame(state, currentFrame);
       });
     });
   </script>

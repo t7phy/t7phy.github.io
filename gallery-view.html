@@ -19,7 +19,9 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="gallery-view-page">
-  <button class="gallery-overlay-back" type="button" id="galleryBack" aria-label="Back to gallery">&#8592;&nbsp;&nbsp;&nbsp;Gallery</button>
+  <header class="gallery-topbar">
+    <button class="gallery-overlay-back" type="button" id="galleryBack" aria-label="Back to gallery">&#8592;&nbsp;&nbsp;&nbsp;Gallery</button>
+  </header>
   <section class="gallery-feed" id="galleryFeed"></section>
 
   <script id="galleryData" type="application/json">[{"slug": "post_web_images", "caption": "Pexels image samples with a deliberately long caption for mobile behavior testing. This text is intentionally extended across multiple phrases so it exceeds the three-line clamp and triggers the Show more control. It should expand smoothly, remain readable, and collapse back when Show less is clicked.", "date": "2026-05-11", "thumb": "assets/gallery/generated/thumbs/post_web_images.jpg", "items": [{"type": "image", "src": "assets/gallery/posts/post_web_images/photo_1.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_web_images/photo_2.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_web_images/photo_3.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_web_images/photo_4.jpg", "alt": "", "poster": null, "autoplay": false}]}, {"slug": "post_video_only", "caption": "Video-only post sample.", "date": null, "thumb": "assets/gallery/generated/thumbs/post_video_only.jpg", "items": [{"type": "video", "src": "assets/gallery/posts/post_video_only/clip_a.mp4", "alt": "", "poster": "assets/gallery/generated/posters/post_video_only__1.jpg", "autoplay": true}, {"type": "video", "src": "assets/gallery/posts/post_video_only/clip_b.mp4", "alt": "", "poster": "assets/gallery/generated/posters/post_video_only__2.jpg", "autoplay": false}]}, {"slug": "post_mixed_media", "caption": "Mixed media post sample.", "date": "2026-05-12", "thumb": "assets/gallery/generated/thumbs/post_mixed_media.jpg", "items": [{"type": "image", "src": "assets/gallery/posts/post_mixed_media/photo_a.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "video", "src": "assets/gallery/posts/post_mixed_media/clip_a.mp4", "alt": "", "poster": "assets/gallery/generated/posters/post_mixed_media__2.jpg", "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_mixed_media/photo_b.jpg", "alt": "", "poster": null, "autoplay": false}]}, {"slug": "post_multi_image", "caption": "Multi-image post sample.", "date": null, "thumb": "assets/gallery/generated/thumbs/post_multi_image.jpg", "items": [{"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_a.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_b.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_c.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_a.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_b.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_c.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_a.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_b.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_c.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_a.jpg", "alt": "", "poster": null, "autoplay": false}, {"type": "image", "src": "assets/gallery/posts/post_multi_image/photo_b.jpg", "alt": "", "poster": null, "autoplay": false}]}, {"slug": "post_single_image", "caption": "Single image post sample.", "date": null, "thumb": "assets/gallery/generated/thumbs/post_single_image.jpg", "items": [{"type": "image", "src": "assets/gallery/posts/post_single_image/photo_a.jpg", "alt": "", "poster": null, "autoplay": false}]}]</script>
@@ -201,36 +203,6 @@
       return newFrame;
     }
 
-    function adjustMobileStageForFrame(state, frame) {
-      if (!isMobileView()) {
-        state.stage.style.height = "";
-        state.stage.style.maxHeight = "";
-        return;
-      }
-      const media = frame ? frame.querySelector("img,video") : null;
-      if (!media) return;
-      const apply = () => {
-        const naturalW = media.tagName.toLowerCase() === "video" ? media.videoWidth : media.naturalWidth;
-        const naturalH = media.tagName.toLowerCase() === "video" ? media.videoHeight : media.naturalHeight;
-        if (!naturalW || !naturalH) return;
-        const stageWidth = state.stage.clientWidth || Math.max(1, window.innerWidth - 16);
-        const maxH = Math.max(200, window.innerHeight - 320);
-        const target = Math.min(maxH, stageWidth * (naturalH / naturalW));
-        const px = `${Math.round(target)}px`;
-        state.stage.style.height = px;
-        state.stage.style.maxHeight = px;
-      };
-      const ready = media.tagName.toLowerCase() === "video"
-        ? (media.videoWidth > 0 && media.videoHeight > 0)
-        : (media.naturalWidth > 0 && media.naturalHeight > 0);
-      if (ready) {
-        apply();
-      } else {
-        const evt = media.tagName.toLowerCase() === "video" ? "loadedmetadata" : "load";
-        media.addEventListener(evt, apply, { once: true });
-      }
-    }
-
     function syncVideoPlaybackForState(state) {
       const frames = state.stage.querySelectorAll(".gallery-media-frame");
       frames.forEach(frame => {
@@ -310,8 +282,6 @@
       } else {
         syncVideoPlaybackForState(state);
       }
-      const activeFrame = state.stage.querySelector(".gallery-media-frame.current");
-      if (activeFrame) adjustMobileStageForFrame(state, activeFrame);
       state.date.textContent = post.date || "";
       state.date.hidden = !post.date;
       state.caption.textContent = post.caption || "";
@@ -563,8 +533,6 @@
     window.addEventListener("resize", () => {
       feedStates.forEach(state => {
         syncCaptionState(state);
-        const currentFrame = state.stage.querySelector(".gallery-media-frame.current");
-        if (currentFrame) adjustMobileStageForFrame(state, currentFrame);
       });
     });
   </script>
