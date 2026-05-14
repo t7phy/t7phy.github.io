@@ -231,7 +231,29 @@
       frame.style.transform = `translateX(${valuePx}px)`;
     }
 
+    function keepOnlyFrame(state, frameToKeep) {
+      const frames = state.stage.querySelectorAll(".gallery-media-frame");
+      frames.forEach(frame => {
+        if (frame !== frameToKeep) frame.remove();
+      });
+    }
+
+    function finalizeInFlightTransition(state, syncPlayback = false) {
+      if (!state.transition) return;
+      const { timeoutId, incomingFrame, outgoingFrame } = state.transition;
+      if (timeoutId) window.clearTimeout(timeoutId);
+      if (outgoingFrame && outgoingFrame.isConnected) outgoingFrame.remove();
+      if (incomingFrame && incomingFrame.isConnected) {
+        incomingFrame.classList.add("current");
+        setTranslateX(incomingFrame, 0, false);
+        keepOnlyFrame(state, incomingFrame);
+      }
+      state.transition = null;
+      if (syncPlayback) syncVideoPlaybackForState(state);
+    }
+
     function mountMediaWithTransition(state, item, itemIndex, direction = 0) {
+      finalizeInFlightTransition(state, false);
       const oldFrame = state.stage.querySelector(".gallery-media-frame.current");
       const newFrame = createFrame(item, itemIndex);
       newFrame.classList.add("current");
@@ -240,10 +262,12 @@
       if (!oldFrame || direction === 0) {
         if (oldFrame) oldFrame.remove();
         setTranslateX(newFrame, 0, false);
+        keepOnlyFrame(state, newFrame);
         syncVideoPlaybackForState(state);
         return;
       }
 
+      oldFrame.classList.remove("current");
       const width = state.stage.clientWidth || 1;
       const startX = direction > 0 ? width : -width;
       setTranslateX(newFrame, startX, false);
@@ -251,10 +275,13 @@
         setTranslateX(newFrame, 0, true);
         setTranslateX(oldFrame, -startX, true);
       });
-      window.setTimeout(() => {
+      const timeoutId = window.setTimeout(() => {
         oldFrame.remove();
+        keepOnlyFrame(state, newFrame);
+        state.transition = null;
         syncVideoPlaybackForState(state);
       }, 340);
+      state.transition = { timeoutId, incomingFrame: newFrame, outgoingFrame: oldFrame };
     }
 
     function ensureAdjacentFrame(state, direction) {
@@ -355,7 +382,7 @@
         article.append(mediaWrap, counter, dots, captionPanel);
         galleryFeed.appendChild(article);
 
-        feedStates.push({ postIndex, itemIndex: 0, prevBtn, nextBtn, stage, counter, dots, caption, moreBtn, date, expanded: false });
+        feedStates.push({ postIndex, itemIndex: 0, prevBtn, nextBtn, stage, counter, dots, caption, moreBtn, date, expanded: false, transition: null });
         updateFeedPost(postIndex, 0);
 
         prevBtn.addEventListener("click", () => stepFeedItem(postIndex, -1));
