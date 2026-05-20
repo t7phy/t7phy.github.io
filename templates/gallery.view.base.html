@@ -183,12 +183,21 @@
         shell.append(video, playBtn, muteBtn);
         return shell;
       }
+      const picture = document.createElement("picture");
+      picture.className = "gallery-picture";
+      if (item.sourceType) {
+        const source = document.createElement("source");
+        source.srcset = item.src;
+        source.type = item.sourceType;
+        picture.appendChild(source);
+      }
       const img = document.createElement("img");
       img.className = "gallery-media";
-      img.src = item.src;
+      img.src = item.fallbackSrc || item.src;
       img.alt = item.alt || "";
       img.draggable = false;
-      return img;
+      picture.appendChild(img);
+      return picture;
     }
 
     function createFrame(item, itemIndex) {
@@ -309,8 +318,9 @@
       } else {
         syncVideoPlaybackForState(state);
       }
-      state.date.textContent = post.date || "";
-      state.date.hidden = !post.date;
+      const shouldShowDate = Boolean(post.showDate) && Boolean(post.date);
+      state.date.textContent = shouldShowDate ? post.date : "";
+      state.date.hidden = !shouldShowDate;
       state.caption.textContent = post.caption || "";
       state.prevBtn.disabled = state.itemIndex === 0;
       state.nextBtn.disabled = state.itemIndex === post.items.length - 1;

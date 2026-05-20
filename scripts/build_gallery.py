@@ -8,6 +8,12 @@ from pathlib import Path
 
 import imageio.v3 as iio
 from PIL import Image
+try:
+    from pillow_heif import register_heif_opener
+except ImportError:  # Optional unless HEIC/HEIF inputs are used.
+    register_heif_opener = None
+else:
+    register_heif_opener()
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -21,11 +27,13 @@ POSTS_DIR = ROOT / "assets" / "gallery" / "posts"
 GENERATED_DIR = ROOT / "assets" / "gallery" / "generated"
 THUMBS_DIR = GENERATED_DIR / "thumbs"
 POSTERS_DIR = GENERATED_DIR / "posters"
+FALLBACKS_DIR = GENERATED_DIR / "fallbacks"
 
 THUMB_SIZE = 960
 POSTER_SIZE = 1600
-IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp"}
+IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".avif", ".heic", ".heif"}
 VIDEO_EXTS = {".mp4", ".webm", ".mov", ".m4v"}
+FALLBACK_IMAGE_EXTS = {".heic", ".heif"}
 
 
 @dataclass(frozen=True)
@@ -35,6 +43,8 @@ class MediaItem:
     alt: str
     poster: str | None = None
     autoplay: bool = False
+    source_type: str | None = None
+    fallback_src: str | None = None
 
 
 @dataclass(frozen=True)
@@ -42,6 +52,7 @@ class GalleryPost:
     slug: str
     caption: str
     date: str | None
+    show_date: bool
     thumb: str
     items: list[MediaItem]
 
@@ -52,6 +63,22 @@ def _req(value: object, label: str) -> str:
     return value.strip()
 
 
+def _str_or_empty(value: object, label: str) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value
+    raise ValueError(f"Invalid '{label}': expected string.")
+
+
+def _optional_bool(value: object, label: str, default: bool = False) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    raise ValueError(f"Invalid '{label}': expected boolean.")
+
+
 def _detect_type(name: str) -> str:
     ext = Path(name).suffix.lower()
     if ext in IMAGE_EXTS:
@@ -59,6 +86,33 @@ def _detect_type(name: str) -> str:
     if ext in VIDEO_EXTS:
         return "video"
     raise ValueError(f"Unsupported media extension: {name}")
+
+
+def _image_mime_type(name: str) -> str:
+    ext = Path(name).suffix.lower()
+    if ext in {".jpg", ".jpeg"}:
+        return "image/jpeg"
+    if ext == ".png":
+        return "image/png"
+    if ext == ".webp":
+        return "image/webp"
+    if ext == ".avif":
+        return "image/avif"
+    if ext == ".heic":
+        return "image/heic"
+    if ext == ".heif":
+        return "image/heif"
+    raise ValueError(f"Unsupported image extension: {name}")
+
+
+def _open_image(path: Path) -> Image.Image:
+    ext = path.suffix.lower()
+    if ext in FALLBACK_IMAGE_EXTS and register_heif_opener is None:
+        raise ValueError(
+            f"Cannot read {path.name}: HEIC/HEIF support requires pillow-heif. "
+            "Install dependencies from scripts/requirements.txt."
+        )
+    return Image.open(path).convert("RGB")
 
 
 def _center_crop(image: Image.Image, size: int) -> Image.Image:
@@ -87,7 +141,7 @@ def _first_video_frame(path: Path) -> Image.Image:
 
 def _load_image(path: Path, media_type: str) -> Image.Image:
     if media_type == "image":
-        return Image.open(path).convert("RGB")
+        return _open_image(path)
     return _first_video_frame(path)
 
 
@@ -101,6 +155,11 @@ def _build_poster(source: Path, dest: Path) -> None:
     image = _first_video_frame(source)
     image.thumbnail((POSTER_SIZE, POSTER_SIZE), Image.Resampling.LANCZOS)
     image.save(dest, format="JPEG", quality=90, optimize=True)
+
+
+def _build_image_fallback(source: Path, dest: Path) -> None:
+    image = _open_image(source)
+    image.save(dest, format="PNG", optimize=True)
 
 
 def _to_web(path: Path) -> str:
@@ -125,6 +184,7 @@ def _render_cards(posts: list[GalleryPost]) -> str:
 def build() -> None:
     THUMBS_DIR.mkdir(parents=True, exist_ok=True)
     POSTERS_DIR.mkdir(parents=True, exist_ok=True)
+    FALLBACKS_DIR.mkdir(parents=True, exist_ok=True)
 
     with DATA_PATH.open("rb") as f:
         data = tomllib.load(f)
@@ -135,13 +195,15 @@ def build() -> None:
 
     keep_thumbs: set[Path] = set()
     keep_posters: set[Path] = set()
+    keep_fallbacks: set[Path] = set()
     posts: list[GalleryPost] = []
 
     for index, raw in enumerate(reversed(posts_raw), start=1):
         slug = _req(raw.get("slug"), f"posts[{index}].slug")
-        caption = _req(raw.get("caption"), f"posts[{index}].caption")
+        caption = _str_or_empty(raw.get("caption"), f"posts[{index}].caption")
         date_raw = raw.get("date")
         date_value = date_raw.strip() if isinstance(date_raw, str) and date_raw.strip() else None
+        show_date = _optional_bool(raw.get("show_date"), f"posts[{index}].show_date", default=False)
         thumb_item = _req(raw.get("thumb_item"), f"posts[{index}].thumb_item")
         thumb_mode = _req(raw.get("thumb_mode"), f"posts[{index}].thumb_mode").lower()
         if thumb_mode not in {"crop", "contain"}:
@@ -167,6 +229,8 @@ def build() -> None:
             media_type = _detect_type(file_name)
             alt = item_raw.get("alt")
             alt_text = alt.strip() if isinstance(alt, str) else ""
+            source_type = _image_mime_type(file_name) if media_type == "image" else None
+            fallback_src = None
 
             poster_web = None
             if media_type == "video":
@@ -178,6 +242,11 @@ def build() -> None:
                 autoplay = isinstance(play_mode, str) and play_mode.strip().lower() == "play"
             else:
                 autoplay = False
+                if media_path.suffix.lower() in FALLBACK_IMAGE_EXTS:
+                    fallback_path = FALLBACKS_DIR / f"{slug}__{item_idx}.png"
+                    _build_image_fallback(media_path, fallback_path)
+                    keep_fallbacks.add(fallback_path)
+                    fallback_src = _to_web(fallback_path)
 
             media_items.append(
                 MediaItem(
@@ -186,6 +255,8 @@ def build() -> None:
                     alt=alt_text,
                     poster=poster_web,
                     autoplay=autoplay,
+                    source_type=source_type,
+                    fallback_src=fallback_src,
                 )
             )
 
@@ -205,6 +276,7 @@ def build() -> None:
                 slug=slug,
                 caption=caption,
                 date=date_value,
+                show_date=show_date,
                 thumb=_to_web(thumb_path),
                 items=media_items,
             )
@@ -216,15 +288,26 @@ def build() -> None:
     for stale in POSTERS_DIR.glob("*.jpg"):
         if stale not in keep_posters:
             stale.unlink()
+    for stale in FALLBACKS_DIR.glob("*"):
+        if stale not in keep_fallbacks:
+            stale.unlink()
 
     payload = [
         {
             "slug": post.slug,
             "caption": post.caption,
             "date": post.date,
+            "showDate": post.show_date,
             "thumb": post.thumb,
             "items": [
-                {"type": item.type, "src": item.src, "alt": item.alt, "poster": item.poster}
+                {
+                    "type": item.type,
+                    "src": item.src,
+                    "alt": item.alt,
+                    "poster": item.poster,
+                    "sourceType": item.source_type,
+                    "fallbackSrc": item.fallback_src,
+                }
                 | {"autoplay": item.autoplay}
                 for item in post.items
             ],

@@ -53,8 +53,8 @@ GALLERY POST ENTRY TEMPLATE
 [[posts]]
 slug = ""
 caption = ""
-# Optional:
-date = ""
+date = "" # Optional
+show_date = false # Optional (default false). Date is shown only when true.
 thumb_item = ""
 thumb_mode = "crop" # or "contain"
 items = [
@@ -65,8 +65,8 @@ items = [
 [[posts]]
 slug = ""
 caption = ""
-# Optional:
-date = ""
+date = "" # Optional
+show_date = false # Optional (default false). Date is shown only when true.
 thumb_item = ""
 thumb_mode = "contain" # or "crop"
 items = [

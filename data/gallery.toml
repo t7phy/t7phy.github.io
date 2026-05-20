@@ -1,62 +1,879 @@
 [[posts]]
-slug = "post_single_image"
-caption = "Single image post sample."
-thumb_item = "photo_a.jpg"
-thumb_mode = "crop"
-items = [
-  { file = "photo_a.jpg" }
-]
-
-[[posts]]
-slug = "post_multi_image"
-caption = "Multi-image post sample."
-thumb_item = "photo_b.jpg"
+slug = "post_0001"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
 thumb_mode = "contain"
 items = [
-  { file = "photo_a.jpg" },
-  { file = "photo_b.jpg" },
-  { file = "photo_c.jpg" },
-  { file = "photo_a.jpg" },
-  { file = "photo_b.jpg" },
-  { file = "photo_c.jpg" },
-  { file = "photo_a.jpg" },
-  { file = "photo_b.jpg" },
-  { file = "photo_c.jpg" },
-  { file = "photo_a.jpg" },
-  { file = "photo_b.jpg" }
+  { file = "1.jpg" }
 ]
 
 [[posts]]
-slug = "post_mixed_media"
-caption = "Mixed media post sample."
-date = "2026-05-12"
-thumb_item = "clip_a.mp4"
-thumb_mode = "crop"
-items = [
-  { file = "photo_a.jpg" },
-  { file = "clip_a.mp4", play = "pause" },
-  { file = "photo_b.jpg" }
-]
-
-[[posts]]
-slug = "post_video_only"
-caption = "Video-only post sample."
-thumb_item = "clip_a.mp4"
+slug = "post_0002"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
 thumb_mode = "contain"
 items = [
-  { file = "clip_a.mp4", play = "play" },
-  { file = "clip_b.mp4", play = "pause" }
+  { file = "1.jpg" },
+  { file = "2.jpg" }
 ]
 
 [[posts]]
-slug = "post_web_images"
-caption = "Pexels image samples with a deliberately long caption for mobile behavior testing. This text is intentionally extended across multiple phrases so it exceeds the three-line clamp and triggers the Show more control. It should expand smoothly, remain readable, and collapse back when Show less is clicked."
-date = "2026-05-11"
-thumb_item = "photo_1.jpg"
-thumb_mode = "crop"
+slug = "post_0003"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
 items = [
-  { file = "photo_1.jpg" },
-  { file = "photo_2.jpg" },
-  { file = "photo_3.jpg" },
-  { file = "photo_4.jpg" }
+  { file = "1.jpg" }
 ]
+
+[[posts]]
+slug = "post_0004"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0005"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0006"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0007"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0008"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0009"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0010"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0011"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0012"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0013"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0014"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0015"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0016"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0017"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0018"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0019"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0020"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0021"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0022"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0023"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0024"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0025"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" },
+  { file = "2.webp" },
+  { file = "3.webp" }
+]
+
+[[posts]]
+slug = "post_0026"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0027"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" },
+  { file = "2.webp" },
+  { file = "3.webp" },
+  { file = "4.webp" }
+]
+
+[[posts]]
+slug = "post_0028"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0029"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0030"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0031"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0032"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" },
+  { file = "2.webp" },
+  { file = "3.webp" }
+]
+
+[[posts]]
+slug = "post_0033"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0034"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0035"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" },
+  { file = "2.webp" },
+  { file = "3.webp" },
+  { file = "4.mp4" }
+]
+
+[[posts]]
+slug = "post_0036"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0037"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" },
+  { file = "2.webp" }
+]
+
+[[posts]]
+slug = "post_0038"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0039"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0040"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0041"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" },
+  { file = "4.jpg" },
+  { file = "5.jpg" }
+]
+
+[[posts]]
+slug = "post_0042"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0043"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0044"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0045"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0046"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0047"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0048"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0049"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0050"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" }
+]
+
+[[posts]]
+slug = "post_0051"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" }
+]
+
+[[posts]]
+slug = "post_0052"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0053"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" }
+]
+
+[[posts]]
+slug = "post_0054"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" }
+]
+
+[[posts]]
+slug = "post_0055"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0056"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" },
+  { file = "4.jpg" }
+]
+
+[[posts]]
+slug = "post_0057"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" },
+  { file = "4.jpg" },
+  { file = "5.jpg" }
+]
+
+[[posts]]
+slug = "post_0058"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" },
+  { file = "4.jpg" }
+]
+
+[[posts]]
+slug = "post_0059"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" },
+  { file = "4.jpg" },
+  { file = "5.jpg" },
+  { file = "6.jpg" }
+]
+
+[[posts]]
+slug = "post_0060"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" },
+  { file = "4.jpg" },
+  { file = "5.jpg" },
+  { file = "6.jpg" },
+  { file = "7.jpg" },
+  { file = "8.jpg" },
+  { file = "9.jpg" },
+  { file = "10.jpg" },
+  { file = "11.jpg" },
+  { file = "12.jpg" },
+  { file = "13.jpg" },
+  { file = "14.jpg" },
+  { file = "15.jpg" }
+]
+
+[[posts]]
+slug = "post_0061"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" },
+  { file = "4.jpg" },
+  { file = "5.jpg" },
+  { file = "6.jpg" },
+  { file = "7.jpg" },
+  { file = "8.jpg" },
+  { file = "9.jpg" },
+  { file = "10.jpg" }
+]
+
+[[posts]]
+slug = "post_0062"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" }
+]
+
+[[posts]]
+slug = "post_0063"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" },
+  { file = "4.jpg" },
+  { file = "5.jpg" },
+  { file = "6.jpg" },
+  { file = "7.jpg" },
+  { file = "8.jpg" },
+  { file = "9.jpg" },
+  { file = "10.jpg" },
+  { file = "11.jpg" }
+]
+
+[[posts]]
+slug = "post_0064"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.jpg"
+thumb_mode = "contain"
+items = [
+  { file = "1.jpg" },
+  { file = "2.jpg" },
+  { file = "3.jpg" },
+  { file = "4.jpg" },
+  { file = "5.jpg" },
+  { file = "6.jpg" },
+  { file = "7.jpg" }
+]
+
+[[posts]]
+slug = "post_0065"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.heic"
+thumb_mode = "contain"
+items = [
+  { file = "1.heic" }
+]
+
+[[posts]]
+slug = "post_0066"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.heic"
+thumb_mode = "contain"
+items = [
+  { file = "1.heic" },
+  { file = "2.mp4" },
+  { file = "3.heic" },
+  { file = "4.heic" },
+  { file = "5.heic" },
+  { file = "6.heic" },
+  { file = "7.heic" }
+]
+
+[[posts]]
+slug = "post_0067"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.heic"
+thumb_mode = "contain"
+items = [
+  { file = "1.heic" },
+  { file = "2.mp4" },
+  { file = "3.heic" },
+  { file = "4.heic" },
+  { file = "5.heic" },
+  { file = "6.heic" },
+  { file = "7.heic" }
+]
+
+[[posts]]
+slug = "post_0068"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.heic"
+thumb_mode = "contain"
+items = [
+  { file = "1.heic" },
+  { file = "2.heic" }
+]
+
+[[posts]]
+slug = "post_0069"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" }
+]
+
+[[posts]]
+slug = "post_0070"
+caption = ""
+date = ""
+show_date = false
+thumb_item = "1.webp"
+thumb_mode = "contain"
+items = [
+  { file = "1.webp" },
+  { file = "2.webp" },
+  { file = "3.webp" },
+  { file = "4.webp" },
+  { file = "5.webp" },
+  { file = "6.webp" },
+  { file = "7.webp" },
+  { file = "8.webp" },
+  { file = "9.webp" }
+]
+

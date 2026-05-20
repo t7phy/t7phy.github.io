@@ -42,6 +42,8 @@ Template References
 Notes
 -----
 - Research entries: append newest at bottom in TOML; page renders newest first.
-- Gallery `thumb_item` must match one of that post’s `items.file`.
+- Gallery `thumb_item` must match one of that post's `items.file`.
+- Gallery date is shown only when `show_date = true`.
 - Gallery generated thumbnails/posters are auto-managed in `assets/gallery/generated/`.
+- Gallery `.heic`/`.heif` images are supported via automatic PNG fallbacks in `assets/gallery/generated/fallbacks/`.
 - Global styling lives in `styles.css`.

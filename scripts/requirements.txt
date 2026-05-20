@@ -2,3 +2,4 @@ latex2mathml==3.81.0
 Pillow==11.2.1
 imageio==2.37.0
 imageio-ffmpeg==0.6.0
+pillow-heif==0.18.0
