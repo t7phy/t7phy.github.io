@@ -21,8 +21,25 @@
 <body class="gallery-view-page">
   <header class="gallery-topbar">
     <button class="gallery-overlay-back" type="button" id="galleryBack" aria-label="Back to gallery">&#8592;&nbsp;&nbsp;&nbsp;Gallery</button>
+    <div class="gallery-post-counter" id="postCounter" aria-live="polite">post 1/1</div>
   </header>
-  <section class="gallery-feed" id="galleryFeed"></section>
+
+  <section class="gallery-feed" id="galleryFeed">
+    <article class="gallery-feed-post" id="galleryPost">
+      <div class="gallery-feed-media-wrap" id="galleryMediaWrap">
+        <button type="button" class="gallery-nav gallery-prev" id="itemPrev" aria-label="Previous item">&#8249;</button>
+        <div class="gallery-stage" id="galleryStage"></div>
+        <button type="button" class="gallery-nav gallery-next" id="itemNext" aria-label="Next item">&#8250;</button>
+        <div class="gallery-item-counter" id="itemCounter" hidden></div>
+      </div>
+      <div class="gallery-item-dots" id="itemDots"></div>
+      <aside class="gallery-caption-panel">
+        <div class="gallery-caption" id="postCaption"></div>
+        <button type="button" class="gallery-caption-more" id="captionMore">Show more</button>
+        <div class="gallery-date" id="postDate"></div>
+      </aside>
+    </article>
+  </section>
 
   <script id="galleryData" type="application/json">{{GALLERY_DATA}}</script>
   <script>
@@ -49,8 +66,31 @@
     }
 
     const galleryPosts = JSON.parse(document.getElementById("galleryData").textContent);
-    const galleryFeed = document.getElementById("galleryFeed");
-    const feedStates = [];
+    if (!Array.isArray(galleryPosts) || galleryPosts.length === 0) {
+      throw new Error("Gallery data is empty.");
+    }
+
+    const stage = document.getElementById("galleryStage");
+    const itemPrev = document.getElementById("itemPrev");
+    const itemNext = document.getElementById("itemNext");
+    const itemCounter = document.getElementById("itemCounter");
+    const dots = document.getElementById("itemDots");
+    const postCounter = document.getElementById("postCounter");
+    const caption = document.getElementById("postCaption");
+    const moreBtn = document.getElementById("captionMore");
+    const date = document.getElementById("postDate");
+    const galleryPost = document.getElementById("galleryPost");
+
+    const params = new URLSearchParams(window.location.search);
+    const initialPost = Number(params.get("post"));
+
+    const state = {
+      postIndex: Number.isInteger(initialPost) && initialPost >= 0 && initialPost < galleryPosts.length ? initialPost : 0,
+      itemIndex: 0,
+      expanded: false,
+      transition: null,
+      postTransition: null
+    };
 
     function getVisibleDotIndices(total, active, maxDots = MAX_DOTS) {
       if (total <= maxDots) return Array.from({ length: total }, (_, i) => i);
@@ -61,8 +101,8 @@
       return Array.from({ length: maxDots }, (_, i) => start + i);
     }
 
-    function renderDots(state, total, active) {
-      state.dots.innerHTML = "";
+    function renderDots(total, active) {
+      dots.innerHTML = "";
       if (total <= 1) return;
       const visible = getVisibleDotIndices(total, active);
       const first = visible[0];
@@ -75,8 +115,13 @@
           if (first > 0 && dotPos === 0) dot.classList.add("mini");
           if (last < total - 1 && dotPos === visible.length - 1) dot.classList.add("mini");
         }
-        state.dots.appendChild(dot);
+        dots.appendChild(dot);
       });
+    }
+
+    function updatePostCounter(total, active) {
+      const displayIndex = total - active;
+      postCounter.textContent = `post ${displayIndex}/${total}`;
     }
 
     function captionNeedsClamp(captionEl) {
@@ -90,24 +135,24 @@
       return fullHeight > (lineHeight * 3) + 2;
     }
 
-    function syncCaptionState(state) {
+    function syncCaptionState() {
       if (!isMobileView()) {
-        state.caption.classList.remove("collapsed");
-        state.moreBtn.hidden = true;
+        caption.classList.remove("collapsed");
+        moreBtn.hidden = true;
         state.expanded = false;
         return;
       }
       if (state.expanded) {
-        state.caption.classList.remove("collapsed");
-        state.moreBtn.hidden = false;
-        state.moreBtn.textContent = "Show less";
+        caption.classList.remove("collapsed");
+        moreBtn.hidden = false;
+        moreBtn.textContent = "Show less";
         return;
       }
-      state.caption.classList.add("collapsed");
+      caption.classList.add("collapsed");
       raf(() => {
-        const needsClamp = captionNeedsClamp(state.caption);
-        state.moreBtn.hidden = !needsClamp;
-        state.moreBtn.textContent = "Show more";
+        const needsClamp = captionNeedsClamp(caption);
+        moreBtn.hidden = !needsClamp;
+        moreBtn.textContent = "Show more";
       });
     }
 
@@ -124,7 +169,6 @@
         video.muted = true;
         if (item.poster) video.poster = item.poster;
         video.src = item.src;
-        const desktopMode = !isMobileView();
         if (item.autoplay || isMobileView()) {
           video.autoplay = true;
         }
@@ -133,17 +177,17 @@
         playBtn.type = "button";
         playBtn.className = "gallery-video-play";
         playBtn.setAttribute("aria-label", "Play or pause video");
-        playBtn.textContent = "▶";
+        playBtn.innerHTML = "&#9654;";
 
         const muteBtn = document.createElement("button");
         muteBtn.type = "button";
         muteBtn.className = "gallery-video-mute";
         muteBtn.setAttribute("aria-label", "Mute or unmute video");
-        muteBtn.textContent = "🔇";
+        muteBtn.innerHTML = "&#128263;";
 
         const syncButtons = () => {
           playBtn.classList.toggle("hidden", !video.paused && !video.ended);
-          muteBtn.textContent = video.muted ? "🔇" : "🔊";
+          muteBtn.innerHTML = video.muted ? "&#128263;" : "&#128266;";
         };
         const togglePlay = () => {
           if (video.paused) {
@@ -155,7 +199,7 @@
           syncButtons();
         };
 
-        if (desktopMode) {
+        if (!isMobileView()) {
           playBtn.addEventListener("click", event => {
             event.stopPropagation();
             togglePlay();
@@ -183,6 +227,7 @@
         shell.append(video, playBtn, muteBtn);
         return shell;
       }
+
       const picture = document.createElement("picture");
       picture.className = "gallery-picture";
       if (item.sourceType) {
@@ -201,19 +246,18 @@
     }
 
     function createFrame(item, itemIndex) {
-      const newFrame = document.createElement("div");
-      newFrame.className = "gallery-media-frame";
-      newFrame.dataset.itemIndex = String(itemIndex);
+      const frame = document.createElement("div");
+      frame.className = "gallery-media-frame";
+      frame.dataset.itemIndex = String(itemIndex);
       if (item.type === "video") {
-        newFrame.dataset.videoAutoplay = (item.autoplay || isMobileView()) ? "1" : "0";
+        frame.dataset.videoAutoplay = (item.autoplay || isMobileView()) ? "1" : "0";
       }
-      const mediaNode = createMediaNode(item);
-      newFrame.append(mediaNode);
-      return newFrame;
+      frame.appendChild(createMediaNode(item));
+      return frame;
     }
 
-    function syncVideoPlaybackForState(state) {
-      const frames = state.stage.querySelectorAll(".gallery-media-frame");
+    function syncVideoPlayback() {
+      const frames = stage.querySelectorAll(".gallery-media-frame");
       frames.forEach(frame => {
         const video = frame.querySelector("video");
         if (!video) return;
@@ -227,12 +271,8 @@
       });
     }
 
-    function pauseAllVideos(state) {
-      const frames = state.stage.querySelectorAll(".gallery-media-frame");
-      frames.forEach(frame => {
-        const video = frame.querySelector("video");
-        if (video) video.pause();
-      });
+    function pauseAllVideos() {
+      stage.querySelectorAll("video").forEach(video => video.pause());
     }
 
     function setTranslateX(frame, valuePx, animate = true) {
@@ -240,14 +280,13 @@
       frame.style.transform = `translateX(${valuePx}px)`;
     }
 
-    function keepOnlyFrame(state, frameToKeep) {
-      const frames = state.stage.querySelectorAll(".gallery-media-frame");
-      frames.forEach(frame => {
+    function keepOnlyFrame(frameToKeep) {
+      stage.querySelectorAll(".gallery-media-frame").forEach(frame => {
         if (frame !== frameToKeep) frame.remove();
       });
     }
 
-    function finalizeInFlightTransition(state, syncPlayback = false) {
+    function finalizeInFlightTransition(syncPlayback = false) {
       if (!state.transition) return;
       const { timeoutId, incomingFrame, outgoingFrame } = state.transition;
       if (timeoutId) window.clearTimeout(timeoutId);
@@ -255,29 +294,78 @@
       if (incomingFrame && incomingFrame.isConnected) {
         incomingFrame.classList.add("current");
         setTranslateX(incomingFrame, 0, false);
-        keepOnlyFrame(state, incomingFrame);
+        keepOnlyFrame(incomingFrame);
       }
       state.transition = null;
-      if (syncPlayback) syncVideoPlaybackForState(state);
+      if (syncPlayback) syncVideoPlayback();
     }
 
-    function mountMediaWithTransition(state, item, itemIndex, direction = 0) {
-      finalizeInFlightTransition(state, false);
-      const oldFrame = state.stage.querySelector(".gallery-media-frame.current");
+    function clearPostTransitionStyles() {
+      galleryPost.style.willChange = "";
+      galleryPost.style.transition = "";
+      galleryPost.style.transform = "";
+      galleryPost.style.opacity = "";
+    }
+
+    function finalizePostTransition() {
+      if (!state.postTransition) return;
+      window.clearTimeout(state.postTransition.swapTimer);
+      window.clearTimeout(state.postTransition.doneTimer);
+      state.postTransition = null;
+      clearPostTransitionStyles();
+    }
+
+    function animatePostTransition(direction, onSwap) {
+      finalizePostTransition();
+      const distance = Math.round(Math.max(90, galleryPost.clientHeight * (isMobileView() ? 0.14 : 0.1)));
+      const outY = direction > 0 ? -distance : distance;
+      const inY = -outY;
+      galleryPost.style.willChange = "transform, opacity";
+      galleryPost.style.transition = "transform 230ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 190ms ease";
+      raf(() => {
+        galleryPost.style.transform = `translateY(${outY}px)`;
+        galleryPost.style.opacity = "0.01";
+      });
+
+      const swapTimer = window.setTimeout(() => {
+        onSwap();
+        galleryPost.style.transition = "none";
+        galleryPost.style.transform = `translateY(${inY}px)`;
+        galleryPost.style.opacity = "0.01";
+        raf(() => {
+          raf(() => {
+            galleryPost.style.transition = "transform 260ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease";
+            galleryPost.style.transform = "translateY(0)";
+            galleryPost.style.opacity = "1";
+          });
+        });
+      }, 235);
+
+      const doneTimer = window.setTimeout(() => {
+        state.postTransition = null;
+        clearPostTransitionStyles();
+      }, 540);
+
+      state.postTransition = { swapTimer, doneTimer };
+    }
+
+    function mountMediaWithTransition(item, itemIndex, direction = 0) {
+      finalizeInFlightTransition(false);
+      const oldFrame = stage.querySelector(".gallery-media-frame.current");
       const newFrame = createFrame(item, itemIndex);
       newFrame.classList.add("current");
-      state.stage.appendChild(newFrame);
+      stage.appendChild(newFrame);
 
       if (!oldFrame || direction === 0) {
         if (oldFrame) oldFrame.remove();
         setTranslateX(newFrame, 0, false);
-        keepOnlyFrame(state, newFrame);
-        syncVideoPlaybackForState(state);
+        keepOnlyFrame(newFrame);
+        syncVideoPlayback();
         return;
       }
 
       oldFrame.classList.remove("current");
-      const width = state.stage.clientWidth || 1;
+      const width = stage.clientWidth || 1;
       const startX = direction > 0 ? width : -width;
       setTranslateX(newFrame, startX, false);
       raf(() => {
@@ -286,278 +374,315 @@
       });
       const timeoutId = window.setTimeout(() => {
         oldFrame.remove();
-        keepOnlyFrame(state, newFrame);
+        keepOnlyFrame(newFrame);
         state.transition = null;
-        syncVideoPlaybackForState(state);
+        syncVideoPlayback();
       }, 340);
       state.transition = { timeoutId, incomingFrame: newFrame, outgoingFrame: oldFrame };
     }
 
-    function ensureAdjacentFrame(state, direction) {
+    function ensureAdjacentFrame(direction) {
       const post = galleryPosts[state.postIndex];
       const targetIndex = state.itemIndex + direction;
       if (targetIndex < 0 || targetIndex >= post.items.length) return null;
-      const existing = state.stage.querySelector(`.gallery-media-frame[data-item-index="${targetIndex}"]`);
+      const existing = stage.querySelector(`.gallery-media-frame[data-item-index="${targetIndex}"]`);
       if (existing) return existing;
       const frame = createFrame(post.items[targetIndex], targetIndex);
-      state.stage.appendChild(frame);
-      const width = state.stage.clientWidth || 1;
+      stage.appendChild(frame);
+      const width = stage.clientWidth || 1;
       setTranslateX(frame, direction > 0 ? width : -width, false);
       return frame;
     }
 
-    function updateFeedPost(postIndex, direction = 0) {
-      const state = feedStates[postIndex];
-      const post = galleryPosts[postIndex];
+    function updatePostParam() {
+      const paramsNext = new URLSearchParams(window.location.search);
+      paramsNext.set("post", String(state.postIndex));
+      const next = `${window.location.pathname}?${paramsNext.toString()}`;
+      window.history.replaceState(null, "", next);
+    }
+
+    function updateViewer(direction = 0) {
+      const post = galleryPosts[state.postIndex];
       const item = post.items[state.itemIndex];
-      const currentFrame = state.stage.querySelector(".gallery-media-frame.current");
+      const currentFrame = stage.querySelector(".gallery-media-frame.current");
       const mountedIndex = currentFrame ? Number(currentFrame.dataset.itemIndex) : -1;
       const needsRemount = direction !== 0 || mountedIndex !== state.itemIndex;
       if (needsRemount) {
-        mountMediaWithTransition(state, item, state.itemIndex, direction);
+        mountMediaWithTransition(item, state.itemIndex, direction);
       } else {
-        syncVideoPlaybackForState(state);
+        syncVideoPlayback();
       }
+
+      const totalPosts = galleryPosts.length;
+
       const shouldShowDate = Boolean(post.showDate) && Boolean(post.date);
-      state.date.textContent = shouldShowDate ? post.date : "";
-      state.date.hidden = !shouldShowDate;
-      state.caption.textContent = post.caption || "";
-      state.prevBtn.disabled = state.itemIndex === 0;
-      state.nextBtn.disabled = state.itemIndex === post.items.length - 1;
-      state.prevBtn.classList.toggle("hidden", state.itemIndex === 0);
-      state.nextBtn.classList.toggle("hidden", state.itemIndex === post.items.length - 1);
-      state.counter.hidden = post.items.length <= 1;
-      state.counter.textContent = `${state.itemIndex + 1}/${post.items.length}`;
-      renderDots(state, post.items.length, state.itemIndex);
+      date.textContent = shouldShowDate ? post.date : "";
+      date.hidden = !shouldShowDate;
+      caption.textContent = post.caption || "";
+
+      itemPrev.classList.toggle("hidden", state.itemIndex === 0);
+      itemNext.classList.toggle("hidden", state.itemIndex === post.items.length - 1);
+
+      itemCounter.hidden = post.items.length <= 1;
+      itemCounter.textContent = `${state.itemIndex + 1}/${post.items.length}`;
+      renderDots(post.items.length, state.itemIndex);
+      updatePostCounter(totalPosts, state.postIndex);
+
       state.expanded = false;
-      syncCaptionState(state);
+      syncCaptionState();
+      updatePostParam();
     }
 
-    function stepFeedItem(postIndex, direction) {
-      const state = feedStates[postIndex];
-      const max = galleryPosts[postIndex].items.length - 1;
+    function stepItem(direction) {
+      if (state.postTransition) return;
+      const post = galleryPosts[state.postIndex];
+      const max = post.items.length - 1;
       const next = Math.min(Math.max(state.itemIndex + direction, 0), max);
       if (next === state.itemIndex) return;
       state.itemIndex = next;
-      updateFeedPost(postIndex, direction);
+      updateViewer(direction);
     }
 
-    function buildFeed() {
-      galleryPosts.forEach((post, postIndex) => {
-        const article = document.createElement("article");
-        article.className = "gallery-feed-post";
-        article.dataset.postIndex = String(postIndex);
+    function stepPost(direction) {
+      const max = galleryPosts.length - 1;
+      const next = Math.min(Math.max(state.postIndex + direction, 0), max);
+      if (next === state.postIndex) return;
+      finalizeInFlightTransition(false);
+      finalizePostTransition();
+      pauseAllVideos();
+      animatePostTransition(direction, () => {
+        state.postIndex = next;
+        state.itemIndex = 0;
+        state.expanded = false;
+        stage.innerHTML = "";
+        updateViewer(0);
+      });
+    }
 
-        const mediaWrap = document.createElement("div");
-        mediaWrap.className = "gallery-feed-media-wrap";
+    function isEditableTarget(target) {
+      if (!target) return false;
+      if (target.isContentEditable) return true;
+      const tag = target.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+    }
 
-        const prevBtn = document.createElement("button");
-        prevBtn.type = "button";
-        prevBtn.className = "gallery-nav gallery-prev";
-        prevBtn.setAttribute("aria-label", "Previous item");
-        prevBtn.innerHTML = "&#8249;";
+    itemPrev.addEventListener("click", () => stepItem(-1));
+    itemNext.addEventListener("click", () => stepItem(1));
 
-        const stage = document.createElement("div");
-        stage.className = "gallery-stage";
+    window.addEventListener("keydown", event => {
+      if (isMobileView()) return;
+      if (isEditableTarget(event.target)) return;
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        stepItem(1);
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        stepItem(-1);
+      } else if (event.key === "ArrowDown" || event.key === "PageDown") {
+        event.preventDefault();
+        stepPost(1);
+      } else if (event.key === "ArrowUp" || event.key === "PageUp") {
+        event.preventDefault();
+        stepPost(-1);
+      }
+    });
 
-        const nextBtn = document.createElement("button");
-        nextBtn.type = "button";
-        nextBtn.className = "gallery-nav gallery-next";
-        nextBtn.setAttribute("aria-label", "Next item");
-        nextBtn.innerHTML = "&#8250;";
+    let startX = 0;
+    let startY = 0;
+    let trackingPointer = false;
+    let gestureMode = null; // "item" | "post"
+    let draggingCarousel = false;
+    let dragDx = 0;
+    let dragDy = 0;
+    let dragDirection = 0;
+    let dragNeighbor = null;
+    let pointerId = null;
+    let startTime = 0;
+    let lastMoveTime = 0;
+    let lastMoveX = 0;
+    let lastMoveY = 0;
+    let velocityX = 0;
+    let velocityY = 0;
 
-        mediaWrap.append(prevBtn, stage, nextBtn);
+    stage.addEventListener("pointerdown", event => {
+      if (!isMobileView()) return;
+      if (event.target.closest(".gallery-video-play") || event.target.closest(".gallery-video-mute")) return;
+      finalizeInFlightTransition(true);
+      trackingPointer = true;
+      gestureMode = null;
+      draggingCarousel = false;
+      pointerId = event.pointerId;
+      stage.setPointerCapture(pointerId);
+      startX = event.clientX;
+      startY = event.clientY;
+      startTime = performance.now();
+      lastMoveTime = startTime;
+      lastMoveX = startX;
+      lastMoveY = startY;
+      velocityX = 0;
+      velocityY = 0;
+      dragDx = 0;
+      dragDy = 0;
+      dragDirection = 0;
+      dragNeighbor = null;
+    });
 
-        const dots = document.createElement("div");
-        dots.className = "gallery-item-dots";
-        const counter = document.createElement("div");
-        counter.className = "gallery-item-counter";
-        counter.hidden = true;
+    stage.addEventListener("pointermove", event => {
+      if (!isMobileView() || !trackingPointer) return;
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
+      const absX = Math.abs(dx);
+      const absY = Math.abs(dy);
+      if (!gestureMode) {
+        if (absX < 10 && absY < 10) return;
+        if (absX > absY * 1.25) {
+          gestureMode = "item";
+          draggingCarousel = true;
+        } else if (absY > absX * 1.35) {
+          gestureMode = "post";
+        } else {
+          return;
+        }
+      }
 
-        const captionPanel = document.createElement("aside");
-        captionPanel.className = "gallery-caption-panel";
+      const now = performance.now();
+      const dt = Math.max(1, now - lastMoveTime);
+      if (gestureMode === "item") {
+        event.preventDefault();
+        dragDx = dx;
+        velocityX = (event.clientX - lastMoveX) / dt;
+        lastMoveTime = now;
+        lastMoveX = event.clientX;
+        const candidateDirection = dx < 0 ? 1 : -1;
+        if (candidateDirection !== dragDirection) {
+          dragDirection = candidateDirection;
+          dragNeighbor = ensureAdjacentFrame(dragDirection);
+        }
+        const current = stage.querySelector(".gallery-media-frame.current");
+        if (!current) return;
+        pauseAllVideos();
+        const width = stage.clientWidth || 1;
+        const clampedDx = Math.max(-width, Math.min(width, dx));
+        setTranslateX(current, clampedDx, false);
+        if (dragNeighbor) {
+          const offset = dragDirection > 0 ? width : -width;
+          setTranslateX(dragNeighbor, clampedDx + offset, false);
+        }
+      } else if (gestureMode === "post") {
+        event.preventDefault();
+        dragDy = dy;
+        velocityY = (event.clientY - lastMoveY) / dt;
+        lastMoveTime = now;
+        lastMoveY = event.clientY;
+      }
+    });
 
-        const caption = document.createElement("div");
-        caption.className = "gallery-caption";
-
-        const moreBtn = document.createElement("button");
-        moreBtn.type = "button";
-        moreBtn.className = "gallery-caption-more";
-        moreBtn.textContent = "Show more";
-
-        const date = document.createElement("div");
-        date.className = "gallery-date";
-
-        captionPanel.append(caption, moreBtn, date);
-        article.append(mediaWrap, counter, dots, captionPanel);
-        galleryFeed.appendChild(article);
-
-        feedStates.push({ postIndex, itemIndex: 0, prevBtn, nextBtn, stage, counter, dots, caption, moreBtn, date, expanded: false, transition: null });
-        updateFeedPost(postIndex, 0);
-
-        prevBtn.addEventListener("click", () => stepFeedItem(postIndex, -1));
-        nextBtn.addEventListener("click", () => stepFeedItem(postIndex, 1));
-
-        let startX = 0;
-        let startY = 0;
-        let trackingPointer = false;
-        let draggingCarousel = false;
-        let dragDx = 0;
-        let dragDirection = 0;
-        let dragNeighbor = null;
-        let pointerId = null;
-        let startTime = 0;
-        let lastMoveTime = 0;
-        let lastMoveX = 0;
-        let velocityX = 0;
-        stage.addEventListener("pointerdown", event => {
-          if (!isMobileView()) return;
-          if (event.target.closest(".gallery-video-play") || event.target.closest(".gallery-video-mute")) return;
-          trackingPointer = true;
-          draggingCarousel = false;
-          pointerId = event.pointerId;
-          stage.setPointerCapture(pointerId);
-          startX = event.clientX;
-          startY = event.clientY;
-          startTime = performance.now();
-          lastMoveTime = startTime;
-          lastMoveX = startX;
-          velocityX = 0;
-          dragDx = 0;
-          dragDirection = 0;
-          dragNeighbor = null;
-        });
-        stage.addEventListener("pointermove", event => {
-          if (!isMobileView() || !trackingPointer) return;
-          const dx = event.clientX - startX;
-          const dy = event.clientY - startY;
-          if (!draggingCarousel) {
-            if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-            if (Math.abs(dx) <= Math.abs(dy)) {
-              trackingPointer = false;
-              if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
-              pointerId = null;
-              return;
-            }
-            draggingCarousel = true;
-          }
-          event.preventDefault();
-          dragDx = dx;
-          const now = performance.now();
-          const dt = Math.max(1, now - lastMoveTime);
-          velocityX = (event.clientX - lastMoveX) / dt;
-          lastMoveTime = now;
-          lastMoveX = event.clientX;
-          const candidateDirection = dx < 0 ? 1 : -1;
-          if (candidateDirection !== dragDirection) {
-            dragDirection = candidateDirection;
-            dragNeighbor = ensureAdjacentFrame(feedStates[postIndex], dragDirection);
-          }
-          const state = feedStates[postIndex];
-          const current = state.stage.querySelector(".gallery-media-frame.current");
-          if (!current) return;
-          pauseAllVideos(state);
-          const width = state.stage.clientWidth || 1;
-          const clampedDx = Math.max(-width, Math.min(width, dx));
-          setTranslateX(current, clampedDx, false);
+    stage.addEventListener("pointerup", () => {
+      if (!isMobileView() || !trackingPointer) return;
+      trackingPointer = false;
+      if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
+      pointerId = null;
+      const elapsed = Math.max(1, performance.now() - startTime);
+      if (gestureMode === "item") {
+        const current = stage.querySelector(".gallery-media-frame.current");
+        if (!current) return;
+        const width = stage.clientWidth || 1;
+        const travelRatio = Math.abs(dragDx) / width;
+        const avgVelocityX = dragDx / elapsed;
+        const flickVelocity = Math.abs(velocityX) > 0.85 || Math.abs(avgVelocityX) > 0.75;
+        const distancePass = travelRatio >= 0.38;
+        const shouldAdvance = draggingCarousel && dragNeighbor && (distancePass || flickVelocity);
+        if (shouldAdvance) {
+          const advanceDir = dragDirection;
+          const finalOut = advanceDir > 0 ? -width : width;
+          setTranslateX(current, finalOut, true);
+          setTranslateX(dragNeighbor, 0, true);
+          current.classList.remove("current");
+          dragNeighbor.classList.add("current");
+          const newIndex = state.itemIndex + advanceDir;
+          window.setTimeout(() => {
+            current.remove();
+            state.itemIndex = newIndex;
+            stage.querySelectorAll(".gallery-media-frame").forEach(frame => {
+              if (!frame.classList.contains("current")) frame.remove();
+            });
+            updateViewer(0);
+          }, 340);
+        } else {
+          setTranslateX(current, 0, true);
           if (dragNeighbor) {
-            const offset = dragDirection > 0 ? width : -width;
-            setTranslateX(dragNeighbor, clampedDx + offset, false);
-          }
-        });
-        stage.addEventListener("pointerup", event => {
-          if (!isMobileView() || !trackingPointer) return;
-          trackingPointer = false;
-          if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
-          pointerId = null;
-          const state = feedStates[postIndex];
-          const current = state.stage.querySelector(".gallery-media-frame.current");
-          if (!current) return;
-          const width = state.stage.clientWidth || 1;
-          const travelRatio = Math.abs(dragDx) / width;
-          const elapsed = Math.max(1, performance.now() - startTime);
-          const avgVelocityX = dragDx / elapsed;
-          const flickVelocity = Math.abs(velocityX) > 0.85 || Math.abs(avgVelocityX) > 0.75;
-          const distancePass = travelRatio >= 0.38;
-          const shouldAdvance = draggingCarousel && dragNeighbor && (distancePass || flickVelocity);
-          if (shouldAdvance) {
-            const advanceDir = dragDirection;
-            const finalOut = advanceDir > 0 ? -width : width;
-            setTranslateX(current, finalOut, true);
-            setTranslateX(dragNeighbor, 0, true);
-            current.classList.remove("current");
-            dragNeighbor.classList.add("current");
-            const newIndex = state.itemIndex + advanceDir;
-            window.setTimeout(() => {
-              current.remove();
-              state.itemIndex = newIndex;
-              state.stage.querySelectorAll(".gallery-media-frame").forEach(frame => {
-                if (!frame.classList.contains("current")) frame.remove();
-              });
-              updateFeedPost(postIndex, 0);
-            }, 340);
-          } else {
-            setTranslateX(current, 0, true);
-            if (dragNeighbor) {
-              const backTo = dragDirection > 0 ? width : -width;
-              setTranslateX(dragNeighbor, backTo, true);
-              window.setTimeout(() => {
-                dragNeighbor.remove();
-                syncVideoPlaybackForState(state);
-              }, 340);
-            } else {
-              window.setTimeout(() => {
-                syncVideoPlaybackForState(state);
-              }, 340);
-            }
-          }
-          draggingCarousel = false;
-          dragNeighbor = null;
-          dragDirection = 0;
-          dragDx = 0;
-        });
-        stage.addEventListener("pointercancel", () => {
-          trackingPointer = false;
-          draggingCarousel = false;
-          const state = feedStates[postIndex];
-          const current = state.stage.querySelector(".gallery-media-frame.current");
-          if (current) setTranslateX(current, 0, true);
-          if (dragNeighbor) {
-            const width = state.stage.clientWidth || 1;
             const backTo = dragDirection > 0 ? width : -width;
             setTranslateX(dragNeighbor, backTo, true);
             window.setTimeout(() => {
               dragNeighbor.remove();
-              syncVideoPlaybackForState(state);
+              syncVideoPlayback();
             }, 340);
           } else {
             window.setTimeout(() => {
-              syncVideoPlaybackForState(state);
+              syncVideoPlayback();
             }, 340);
           }
-          dragNeighbor = null;
-          dragDirection = 0;
-          dragDx = 0;
-          if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
-          pointerId = null;
-        });
+        }
+      } else if (gestureMode === "post") {
+        const height = stage.clientHeight || 1;
+        const travelRatioY = Math.abs(dragDy) / height;
+        const avgVelocityY = dragDy / elapsed;
+        const flickY = Math.abs(velocityY) > 0.95 || Math.abs(avgVelocityY) > 0.75;
+        const distancePassY = travelRatioY >= 0.22;
+        if (distancePassY || flickY) {
+          const postDirection = dragDy < 0 ? 1 : -1;
+          stepPost(postDirection);
+        } else {
+          syncVideoPlayback();
+        }
+      }
 
-        moreBtn.addEventListener("click", () => {
-          const state = feedStates[postIndex];
-          state.expanded = !state.expanded;
-          syncCaptionState(state);
-        });
-      });
-    }
+      gestureMode = null;
+      draggingCarousel = false;
+      dragNeighbor = null;
+      dragDirection = 0;
+      dragDx = 0;
+      dragDy = 0;
+      velocityY = 0;
+    });
 
-    buildFeed();
+    stage.addEventListener("pointercancel", () => {
+      trackingPointer = false;
+      if (gestureMode === "item") {
+        const current = stage.querySelector(".gallery-media-frame.current");
+        if (current) setTranslateX(current, 0, true);
+        if (dragNeighbor) {
+          const width = stage.clientWidth || 1;
+          const backTo = dragDirection > 0 ? width : -width;
+          setTranslateX(dragNeighbor, backTo, true);
+          window.setTimeout(() => {
+            dragNeighbor.remove();
+            syncVideoPlayback();
+          }, 340);
+        } else {
+          window.setTimeout(() => {
+            syncVideoPlayback();
+          }, 340);
+        }
+      } else {
+        syncVideoPlayback();
+      }
+      gestureMode = null;
+      draggingCarousel = false;
+      dragNeighbor = null;
+      dragDirection = 0;
+      dragDx = 0;
+      dragDy = 0;
+      velocityY = 0;
+      if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
+      pointerId = null;
+    });
 
-    const params = new URLSearchParams(window.location.search);
-    const initialPost = Number(params.get("post"));
-    if (Number.isInteger(initialPost) && initialPost >= 0 && initialPost < galleryPosts.length) {
-      const target = galleryFeed.querySelector('[data-post-index="' + initialPost + '"]');
-      if (target) target.scrollIntoView({ block: "start", behavior: "auto" });
-    }
+    moreBtn.addEventListener("click", () => {
+      state.expanded = !state.expanded;
+      syncCaptionState();
+    });
 
     document.getElementById("galleryBack").addEventListener("click", () => {
       if (window.history.length > 1) {
@@ -568,10 +693,16 @@
     });
 
     window.addEventListener("resize", () => {
-      feedStates.forEach(state => {
-        syncCaptionState(state);
-      });
+      syncCaptionState();
+      const post = galleryPosts[state.postIndex];
+      const current = stage.querySelector(".gallery-media-frame.current");
+      if (current && post && post.items[state.itemIndex] && current.dataset.videoAutoplay !== undefined) {
+        current.dataset.videoAutoplay = (post.items[state.itemIndex].autoplay || isMobileView()) ? "1" : "0";
+        syncVideoPlayback();
+      }
     });
+
+    updateViewer(0);
   </script>
 </body>
 </html>
