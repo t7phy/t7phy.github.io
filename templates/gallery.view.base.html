@@ -45,8 +45,16 @@
   <script>
     const THEME_KEY = "siteTheme";
     const MAX_DOTS = 6;
+    const MOBILE_ANIM_MS = 430;
+    const MOBILE_ANIM_MULTIPLIER = 1.5;
+    const DESKTOP_ANIM_MULTIPLIER = 2;
+    const ITEM_ANIM_EASE = "cubic-bezier(0.22, 0.61, 0.36, 1)";
+    const POST_ANIM_EASE = ITEM_ANIM_EASE;
     const isMobileView = () => window.innerWidth <= 680;
     const raf = cb => window.requestAnimationFrame(cb);
+    const currentAnimMs = () => Math.round(
+      MOBILE_ANIM_MS * (isMobileView() ? MOBILE_ANIM_MULTIPLIER : DESKTOP_ANIM_MULTIPLIER)
+    );
 
     function applyTheme(theme) {
       const resolved = theme === "rustic" ? "rustic" : "elegant";
@@ -82,14 +90,36 @@
     const galleryPost = document.getElementById("galleryPost");
 
     const params = new URLSearchParams(window.location.search);
-    const initialPost = Number(params.get("post"));
+    const initialPostParam = Number(params.get("post"));
+
+    function indexToPostNumber(index) {
+      return galleryPosts.length - index;
+    }
+
+    function postNumberToIndex(postNumber) {
+      return galleryPosts.length - postNumber;
+    }
+
+    function resolveInitialPostIndex(rawParam) {
+      if (!Number.isInteger(rawParam)) return 0;
+      // Canonical mode: URL uses displayed numbering (post x/n).
+      if (rawParam >= 1 && rawParam <= galleryPosts.length) {
+        return postNumberToIndex(rawParam);
+      }
+      // Backward compatibility for older links that used zero-based indices.
+      if (rawParam >= 0 && rawParam < galleryPosts.length) {
+        return rawParam;
+      }
+      return 0;
+    }
 
     const state = {
-      postIndex: Number.isInteger(initialPost) && initialPost >= 0 && initialPost < galleryPosts.length ? initialPost : 0,
+      postIndex: resolveInitialPostIndex(initialPostParam),
       itemIndex: 0,
       expanded: false,
       transition: null,
-      postTransition: null
+      postTransition: null,
+      gestureSettle: null
     };
 
     function getVisibleDotIndices(total, active, maxDots = MAX_DOTS) {
@@ -120,7 +150,7 @@
     }
 
     function updatePostCounter(total, active) {
-      const displayIndex = total - active;
+      const displayIndex = indexToPostNumber(active);
       postCounter.textContent = `post ${displayIndex}/${total}`;
     }
 
@@ -275,8 +305,8 @@
       stage.querySelectorAll("video").forEach(video => video.pause());
     }
 
-    function setTranslateX(frame, valuePx, animate = true) {
-      frame.style.transition = animate ? "" : "none";
+    function setTranslateX(frame, valuePx, animate = true, durationMs = currentAnimMs()) {
+      frame.style.transition = animate ? `transform ${durationMs}ms ${ITEM_ANIM_EASE}` : "none";
       frame.style.transform = `translateX(${valuePx}px)`;
     }
 
@@ -300,6 +330,16 @@
       if (syncPlayback) syncVideoPlayback();
     }
 
+    function finalizeGestureSettle(runFinalize = true) {
+      if (!state.gestureSettle) return;
+      const settle = state.gestureSettle;
+      if (settle.timerId) window.clearTimeout(settle.timerId);
+      state.gestureSettle = null;
+      if (runFinalize && typeof settle.onFinalize === "function") {
+        settle.onFinalize();
+      }
+    }
+
     function clearPostTransitionStyles() {
       galleryPost.style.willChange = "";
       galleryPost.style.transition = "";
@@ -307,50 +347,67 @@
       galleryPost.style.opacity = "";
     }
 
-    function finalizePostTransition() {
+    function finalizePostTransition(commitSwap = true) {
       if (!state.postTransition) return;
-      window.clearTimeout(state.postTransition.swapTimer);
-      window.clearTimeout(state.postTransition.doneTimer);
+      const transition = state.postTransition;
+      window.clearTimeout(transition.swapTimer);
+      window.clearTimeout(transition.doneTimer);
+      if (commitSwap && !transition.swapped) {
+        transition.swapped = true;
+        transition.onSwap();
+      }
       state.postTransition = null;
       clearPostTransitionStyles();
     }
 
     function animatePostTransition(direction, onSwap) {
       finalizePostTransition();
+      const postAnimMs = currentAnimMs();
+      const postPhaseMs = Math.round(postAnimMs / 2);
       const distance = Math.round(Math.max(90, galleryPost.clientHeight * (isMobileView() ? 0.14 : 0.1)));
       const outY = direction > 0 ? -distance : distance;
       const inY = -outY;
+      const transition = {
+        swapTimer: 0,
+        doneTimer: 0,
+        swapped: false,
+        onSwap
+      };
       galleryPost.style.willChange = "transform, opacity";
-      galleryPost.style.transition = "transform 230ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 190ms ease";
+      galleryPost.style.transition = `transform ${postPhaseMs}ms ${POST_ANIM_EASE}, opacity ${postPhaseMs}ms ease`;
       raf(() => {
         galleryPost.style.transform = `translateY(${outY}px)`;
         galleryPost.style.opacity = "0.01";
       });
 
-      const swapTimer = window.setTimeout(() => {
+      transition.swapTimer = window.setTimeout(() => {
+        if (state.postTransition !== transition) return;
+        transition.swapped = true;
         onSwap();
         galleryPost.style.transition = "none";
         galleryPost.style.transform = `translateY(${inY}px)`;
         galleryPost.style.opacity = "0.01";
         raf(() => {
           raf(() => {
-            galleryPost.style.transition = "transform 260ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease";
+            galleryPost.style.transition = `transform ${postPhaseMs}ms ${POST_ANIM_EASE}, opacity ${postPhaseMs}ms ease`;
             galleryPost.style.transform = "translateY(0)";
             galleryPost.style.opacity = "1";
           });
         });
-      }, 235);
+      }, postPhaseMs);
 
-      const doneTimer = window.setTimeout(() => {
+      transition.doneTimer = window.setTimeout(() => {
+        if (state.postTransition !== transition) return;
         state.postTransition = null;
         clearPostTransitionStyles();
-      }, 540);
+      }, postAnimMs + 30);
 
-      state.postTransition = { swapTimer, doneTimer };
+      state.postTransition = transition;
     }
 
     function mountMediaWithTransition(item, itemIndex, direction = 0) {
       finalizeInFlightTransition(false);
+      const animMs = currentAnimMs();
       const oldFrame = stage.querySelector(".gallery-media-frame.current");
       const newFrame = createFrame(item, itemIndex);
       newFrame.classList.add("current");
@@ -367,17 +424,20 @@
       oldFrame.classList.remove("current");
       const width = stage.clientWidth || 1;
       const startX = direction > 0 ? width : -width;
-      setTranslateX(newFrame, startX, false);
+      setTranslateX(newFrame, startX, false, animMs);
+      // Use double-rAF so the browser commits the start transform before we animate.
       raf(() => {
-        setTranslateX(newFrame, 0, true);
-        setTranslateX(oldFrame, -startX, true);
+        raf(() => {
+          setTranslateX(newFrame, 0, true, animMs);
+          setTranslateX(oldFrame, -startX, true, animMs);
+        });
       });
       const timeoutId = window.setTimeout(() => {
         oldFrame.remove();
         keepOnlyFrame(newFrame);
         state.transition = null;
         syncVideoPlayback();
-      }, 340);
+      }, animMs);
       state.transition = { timeoutId, incomingFrame: newFrame, outgoingFrame: oldFrame };
     }
 
@@ -396,7 +456,7 @@
 
     function updatePostParam() {
       const paramsNext = new URLSearchParams(window.location.search);
-      paramsNext.set("post", String(state.postIndex));
+      paramsNext.set("post", String(indexToPostNumber(state.postIndex)));
       const next = `${window.location.pathname}?${paramsNext.toString()}`;
       window.history.replaceState(null, "", next);
     }
@@ -444,11 +504,11 @@
     }
 
     function stepPost(direction) {
+      finalizePostTransition(true);
       const max = galleryPosts.length - 1;
       const next = Math.min(Math.max(state.postIndex + direction, 0), max);
       if (next === state.postIndex) return;
       finalizeInFlightTransition(false);
-      finalizePostTransition();
       pauseAllVideos();
       animatePostTransition(direction, () => {
         state.postIndex = next;
@@ -508,7 +568,9 @@
     stage.addEventListener("pointerdown", event => {
       if (!isMobileView()) return;
       if (event.target.closest(".gallery-video-play") || event.target.closest(".gallery-video-mute")) return;
+      finalizeGestureSettle(true);
       finalizeInFlightTransition(true);
+      finalizePostTransition(true);
       trackingPointer = true;
       gestureMode = null;
       draggingCarousel = false;
@@ -584,6 +646,7 @@
       if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
       pointerId = null;
       const elapsed = Math.max(1, performance.now() - startTime);
+      const animMs = currentAnimMs();
       if (gestureMode === "item") {
         const current = stage.querySelector(".gallery-media-frame.current");
         if (!current) return;
@@ -601,27 +664,42 @@
           current.classList.remove("current");
           dragNeighbor.classList.add("current");
           const newIndex = state.itemIndex + advanceDir;
-          window.setTimeout(() => {
+          const settleNow = () => {
             current.remove();
             state.itemIndex = newIndex;
             stage.querySelectorAll(".gallery-media-frame").forEach(frame => {
               if (!frame.classList.contains("current")) frame.remove();
             });
             updateViewer(0);
-          }, 340);
+          };
+          const timerId = window.setTimeout(() => {
+            state.gestureSettle = null;
+            settleNow();
+          }, animMs);
+          state.gestureSettle = { timerId, onFinalize: settleNow };
         } else {
           setTranslateX(current, 0, true);
           if (dragNeighbor) {
             const backTo = dragDirection > 0 ? width : -width;
             setTranslateX(dragNeighbor, backTo, true);
-            window.setTimeout(() => {
+            const settleNow = () => {
               dragNeighbor.remove();
               syncVideoPlayback();
-            }, 340);
+            };
+            const timerId = window.setTimeout(() => {
+              state.gestureSettle = null;
+              settleNow();
+            }, animMs);
+            state.gestureSettle = { timerId, onFinalize: settleNow };
           } else {
-            window.setTimeout(() => {
+            const settleNow = () => {
               syncVideoPlayback();
-            }, 340);
+            };
+            const timerId = window.setTimeout(() => {
+              state.gestureSettle = null;
+              settleNow();
+            }, animMs);
+            state.gestureSettle = { timerId, onFinalize: settleNow };
           }
         }
       } else if (gestureMode === "post") {
@@ -649,6 +727,8 @@
 
     stage.addEventListener("pointercancel", () => {
       trackingPointer = false;
+      finalizeGestureSettle(false);
+      const animMs = currentAnimMs();
       if (gestureMode === "item") {
         const current = stage.querySelector(".gallery-media-frame.current");
         if (current) setTranslateX(current, 0, true);
@@ -659,11 +739,11 @@
           window.setTimeout(() => {
             dragNeighbor.remove();
             syncVideoPlayback();
-          }, 340);
+          }, animMs);
         } else {
           window.setTimeout(() => {
             syncVideoPlayback();
-          }, 340);
+          }, animMs);
         }
       } else {
         syncVideoPlayback();

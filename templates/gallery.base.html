@@ -37,6 +37,10 @@
     <a href="index.html">Home</a>
     <a href="cv.html">CV</a>
     <a href="research.html">Research</a>
+    <!-- Template for future placeholder menu pages:
+    <a href="your-page.html" class="coming-soon">Your Page<span class="cs-tag">Coming soon</span></a>
+    -->
+    <a href="software.html" class="coming-soon">Software<span class="cs-tag">Coming soon</span></a>
     <a href="gallery.html">Gallery</a>
   </div>
 
@@ -45,6 +49,10 @@
     <a href="index.html">Home</a>
     <a href="cv.html">CV</a>
     <a href="research.html">Research</a>
+    <!-- Template for future placeholder menu pages:
+    <a href="your-page.html" class="coming-soon">Your Page<span class="mobile-cs">Coming soon</span></a>
+    -->
+    <a href="software.html" class="coming-soon">Software<span class="mobile-cs">Coming soon</span></a>
     <a href="gallery.html">Gallery</a>
   </div>
 
@@ -123,12 +131,13 @@
     }
 
     const galleryPosts = JSON.parse(document.getElementById("galleryData").textContent);
+    const postNumberFromIndex = index => galleryPosts.length - index;
 
     document.getElementById("galleryGrid").addEventListener("click", event => {
       const card = event.target.closest(".gallery-card");
       if (!card) return;
       const postIndex = Number(card.dataset.postIndex);
-      window.location.href = "gallery-view.html?post=" + postIndex;
+      window.location.href = "gallery-view.html?post=" + postNumberFromIndex(postIndex);
     });
 
     document.addEventListener("keydown", event => {

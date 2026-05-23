@@ -481,7 +481,7 @@ footer {
 }
 
 .research-main {
-  width: min(980px, 100% - 3rem);
+  width: min(1240px, 100% - 3rem);
   margin: 0 auto;
   padding: 2rem 0 2.25rem;
 }
@@ -1153,7 +1153,7 @@ video.gallery-media {
 }
 
 .cv-main {
-  width: min(980px, 100% - 3rem);
+  width: min(1240px, 100% - 3rem);
 }
 
 .cv-content {
@@ -1229,7 +1229,7 @@ video.gallery-media {
   }
 
   .research-main {
-    width: min(980px, 100% - 2rem);
+    width: min(1240px, 100% - 2rem);
     padding-top: 1.4rem;
   }
 
