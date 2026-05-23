@@ -591,8 +591,8 @@ items = [
 
 [[posts]]
 slug = "post_0052"
-caption = ""
-date = ""
+caption = "the north sea 🌊"
+date = "June 9, 2024"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -603,8 +603,8 @@ items = [
 
 [[posts]]
 slug = "post_0053"
-caption = ""
-date = ""
+caption = "When your flight gets cancelled and you end up exploring Milan 🇮🇹"
+date = "September 25, 2024"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -616,8 +616,8 @@ items = [
 
 [[posts]]
 slug = "post_0054"
-caption = ""
-date = ""
+caption = "Dutch skies 🇳🇱"
+date = "September 26, 2024"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -629,8 +629,8 @@ items = [
 
 [[posts]]
 slug = "post_0055"
-caption = ""
-date = ""
+caption = "a blanket of fog"
+date = "December 21, 2024"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -641,8 +641,8 @@ items = [
 
 [[posts]]
 slug = "post_0056"
-caption = ""
-date = ""
+caption = "random shots @ CERN"
+date = "March 20, 2025"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -655,8 +655,8 @@ items = [
 
 [[posts]]
 slug = "post_0057"
-caption = ""
-date = ""
+caption = "in the mountains"
+date = "June 22, 2025"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -670,8 +670,8 @@ items = [
 
 [[posts]]
 slug = "post_0058"
-caption = ""
-date = ""
+caption = "a cute piedmontese lake and stream ❤️"
+date = "June 22, 2025"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -684,8 +684,8 @@ items = [
 
 [[posts]]
 slug = "post_0059"
-caption = ""
-date = ""
+caption = "a beautiful evening ❤️"
+date = "July 8, 2025"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -700,8 +700,8 @@ items = [
 
 [[posts]]
 slug = "post_0060"
-caption = ""
-date = ""
+caption = "Bern 🇨🇭"
+date = "August 2, 2025"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -725,8 +725,8 @@ items = [
 
 [[posts]]
 slug = "post_0061"
-caption = ""
-date = ""
+caption = "Oeschinensee ++"
+date = "August 4, 2025"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -745,8 +745,8 @@ items = [
 
 [[posts]]
 slug = "post_0062"
-caption = ""
-date = ""
+caption = "a cute alpine town 🇦🇹"
+date = "August 7, 2025"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -757,8 +757,8 @@ items = [
 
 [[posts]]
 slug = "post_0063"
-caption = ""
-date = ""
+caption = "Lake Geneva ❤️"
+date = "August 12, 2025"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -778,8 +778,8 @@ items = [
 
 [[posts]]
 slug = "post_0064"
-caption = ""
-date = ""
+caption = "hiking in Interlaken..."
+date = "August 15, 2025"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -795,8 +795,8 @@ items = [
 
 [[posts]]
 slug = "post_0065"
-caption = ""
-date = ""
+caption = "🫣"
+date = "August 23, 2025"
 show_date = false
 thumb_item = "1.heic"
 thumb_mode = "contain"
@@ -806,8 +806,8 @@ items = [
 
 [[posts]]
 slug = "post_0066"
-caption = ""
-date = ""
+caption = "Stoos Ridge hike"
+date = "August 28, 2025"
 show_date = false
 thumb_item = "1.heic"
 thumb_mode = "contain"
@@ -823,8 +823,8 @@ items = [
 
 [[posts]]
 slug = "post_0067"
-caption = ""
-date = ""
+caption = "gorges are gorgeous"
+date = "September 10, 2025"
 show_date = false
 thumb_item = "1.heic"
 thumb_mode = "contain"
@@ -840,8 +840,11 @@ items = [
 
 [[posts]]
 slug = "post_0068"
-caption = ""
-date = ""
+caption = """
+01.11.2022 - 15.09.2025
+phd ✅✅✅
+"""
+date = "September 15, 2025"
 show_date = false
 thumb_item = "1.heic"
 thumb_mode = "contain"
@@ -852,8 +855,8 @@ items = [
 
 [[posts]]
 slug = "post_0069"
-caption = ""
-date = ""
+caption = "a snowy winter night"
+date = "November 30, 2025"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -863,8 +866,8 @@ items = [
 
 [[posts]]
 slug = "post_0070"
-caption = ""
-date = ""
+caption = "somewhere in 🇺🇸"
+date = "May 13, 2026"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"

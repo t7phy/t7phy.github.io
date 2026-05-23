@@ -653,6 +653,7 @@
     let velocityY = 0;
     let gestureOrigin = null; // "stage" | "caption"
     let pointerCaptureEl = null;
+    let captionStartScrollTop = 0;
 
     function resetGestureState() {
       gestureMode = null;
@@ -695,7 +696,6 @@
     function onMobilePointerDown(event, origin) {
       if (!isMobileView()) return;
       if (event.target.closest(".gallery-caption-more")) return;
-      if (origin === "caption" && shouldUseCaptionScrollOnMobile()) return;
       if (event.target.closest(".gallery-video-play") || event.target.closest(".gallery-video-mute")) return;
       finalizeGestureSettle(true);
       finalizeInFlightTransition(true);
@@ -721,6 +721,10 @@
       dragDy = 0;
       dragDirection = 0;
       dragNeighbor = null;
+      if (origin === "caption" && shouldUseCaptionScrollOnMobile()) {
+        gestureMode = "caption-scroll";
+        captionStartScrollTop = caption.scrollTop;
+      }
     }
 
     function onMobilePointerMove(event) {
@@ -750,7 +754,12 @@
 
       const now = performance.now();
       const dt = Math.max(1, now - lastMoveTime);
-      if (gestureMode === "item") {
+      if (gestureMode === "caption-scroll") {
+        event.preventDefault();
+        const nextTop = captionStartScrollTop - dy;
+        caption.scrollTop = nextTop;
+        return;
+      } else if (gestureMode === "item") {
         event.preventDefault();
         dragDx = dx;
         velocityX = (event.clientX - lastMoveX) / dt;
@@ -787,7 +796,10 @@
       releasePointerCaptureIfNeeded();
       const elapsed = Math.max(1, performance.now() - startTime);
       const animMs = currentAnimMs();
-      if (gestureMode === "item") {
+      if (gestureMode === "caption-scroll") {
+        resetGestureState();
+        return;
+      } else if (gestureMode === "item") {
         const current = stage.querySelector(".gallery-media-frame.current");
         if (!current) {
           resetGestureState();
@@ -871,7 +883,9 @@
       trackingPointer = false;
       finalizeGestureSettle(false);
       const animMs = currentAnimMs();
-      if (gestureMode === "item") {
+      if (gestureMode === "caption-scroll") {
+        // no-op: caption drag scrolling ends naturally
+      } else if (gestureMode === "item") {
         const current = stage.querySelector(".gallery-media-frame.current");
         if (current) setTranslateX(current, 0, true);
         if (dragNeighbor) {

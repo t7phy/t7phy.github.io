@@ -1333,6 +1333,8 @@ video.gallery-media {
     overflow-x: hidden;
     display: block;
     height: auto;
+    touch-action: none;
+    overscroll-behavior: none;
   }
 
   .gallery-feed-post {
