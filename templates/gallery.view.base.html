@@ -86,6 +86,8 @@
     const itemCounter = document.getElementById("itemCounter");
     const dots = document.getElementById("itemDots");
     const postCounter = document.getElementById("postCounter");
+    const galleryFeed = document.getElementById("galleryFeed");
+    const captionPanel = document.querySelector(".gallery-caption-panel");
     const caption = document.getElementById("postCaption");
     const moreBtn = document.getElementById("captionMore");
     const date = document.getElementById("postDate");
@@ -121,7 +123,8 @@
       expanded: false,
       transition: null,
       postTransition: null,
-      gestureSettle: null
+      gestureSettle: null,
+      captionScrollMode: false
     };
 
     function getVisibleDotIndices(total, active, maxDots = MAX_DOTS) {
@@ -186,6 +189,57 @@
         moreBtn.hidden = !needsClamp;
         moreBtn.textContent = "Show more";
       });
+    }
+
+    function captionHasOverflow() {
+      return caption.scrollHeight > caption.clientHeight + 1;
+    }
+
+    function refreshCaptionScrollMode(reset = false) {
+      if (isMobileView()) {
+        state.captionScrollMode = false;
+        return;
+      }
+      if (reset) {
+        state.captionScrollMode = false;
+        caption.scrollTop = 0;
+      }
+      if (!captionHasOverflow()) {
+        state.captionScrollMode = false;
+      }
+    }
+
+    function syncDesktopCaptionPaneHeight() {
+      if (isMobileView()) {
+        captionPanel.style.removeProperty("--gallery-caption-pane-height");
+        return;
+      }
+      const stageHeight = Math.max(0, Math.round(stage.getBoundingClientRect().height));
+      if (!stageHeight) return;
+      const paneHeight = Math.round(stageHeight * 0.7);
+      captionPanel.style.setProperty("--gallery-caption-pane-height", `${paneHeight}px`);
+    }
+
+    function scrollCaptionByKey(key) {
+      const lineStep = 64;
+      const pageStep = Math.max(120, Math.floor(caption.clientHeight * 0.8));
+      if (key === "ArrowDown") {
+        caption.scrollBy({ top: lineStep, left: 0, behavior: "auto" });
+        return true;
+      }
+      if (key === "ArrowUp") {
+        caption.scrollBy({ top: -lineStep, left: 0, behavior: "auto" });
+        return true;
+      }
+      if (key === "PageDown") {
+        caption.scrollBy({ top: pageStep, left: 0, behavior: "auto" });
+        return true;
+      }
+      if (key === "PageUp") {
+        caption.scrollBy({ top: -pageStep, left: 0, behavior: "auto" });
+        return true;
+      }
+      return false;
     }
 
     function createMediaNode(item) {
@@ -492,6 +546,10 @@
 
       state.expanded = false;
       syncCaptionState();
+      raf(() => {
+        syncDesktopCaptionPaneHeight();
+        refreshCaptionScrollMode(true);
+      });
       updatePostParam();
     }
 
@@ -535,6 +593,15 @@
       if (isMobileView()) return;
       if (isEditableTarget(event.target)) return;
       if (event.altKey || event.ctrlKey || event.metaKey) return;
+      if (
+        state.captionScrollMode &&
+        captionHasOverflow() &&
+        (event.key === "ArrowDown" || event.key === "ArrowUp" || event.key === "PageDown" || event.key === "PageUp")
+      ) {
+        event.preventDefault();
+        scrollCaptionByKey(event.key);
+        return;
+      }
       if (event.key === "ArrowRight") {
         event.preventDefault();
         stepItem(1);
@@ -548,6 +615,24 @@
         event.preventDefault();
         stepPost(-1);
       }
+    });
+
+    captionPanel.addEventListener("pointerdown", () => {
+      if (isMobileView()) return;
+      if (captionHasOverflow()) {
+        state.captionScrollMode = true;
+      }
+    });
+
+    document.addEventListener("pointerdown", event => {
+      if (isMobileView()) return;
+      if (captionPanel.contains(event.target)) return;
+      state.captionScrollMode = false;
+    });
+
+    window.addEventListener("resize", () => {
+      syncDesktopCaptionPaneHeight();
+      refreshCaptionScrollMode();
     });
 
     let startX = 0;
@@ -566,18 +651,64 @@
     let lastMoveY = 0;
     let velocityX = 0;
     let velocityY = 0;
+    let gestureOrigin = null; // "stage" | "caption"
+    let pointerCaptureEl = null;
 
-    stage.addEventListener("pointerdown", event => {
+    function resetGestureState() {
+      gestureMode = null;
+      draggingCarousel = false;
+      dragNeighbor = null;
+      dragDirection = 0;
+      dragDx = 0;
+      dragDy = 0;
+      velocityX = 0;
+      velocityY = 0;
+      gestureOrigin = null;
+    }
+
+    function releasePointerCaptureIfNeeded() {
+      if (pointerId === null || !pointerCaptureEl) {
+        pointerId = null;
+        pointerCaptureEl = null;
+        return;
+      }
+      if (pointerCaptureEl.hasPointerCapture(pointerId)) {
+        pointerCaptureEl.releasePointerCapture(pointerId);
+      }
+      pointerId = null;
+      pointerCaptureEl = null;
+    }
+
+    function shouldUseCaptionScrollOnMobile() {
+      if (!isMobileView()) return false;
+      if (!state.expanded) return false;
+      if (moreBtn.hidden) return false;
+      return captionHasOverflow();
+    }
+
+    function resolveMobileGestureOrigin(target) {
+      if (target.closest(".gallery-stage")) return "stage";
+      if (target.closest(".gallery-caption-panel")) return "caption";
+      return "feed";
+    }
+
+    function onMobilePointerDown(event, origin) {
       if (!isMobileView()) return;
+      if (event.target.closest(".gallery-caption-more")) return;
+      if (origin === "caption" && shouldUseCaptionScrollOnMobile()) return;
       if (event.target.closest(".gallery-video-play") || event.target.closest(".gallery-video-mute")) return;
       finalizeGestureSettle(true);
       finalizeInFlightTransition(true);
       finalizePostTransition(true);
       trackingPointer = true;
+      pointerId = event.pointerId;
+      pointerCaptureEl = event.currentTarget;
+      if (pointerCaptureEl && typeof pointerCaptureEl.setPointerCapture === "function") {
+        pointerCaptureEl.setPointerCapture(pointerId);
+      }
+      gestureOrigin = origin;
       gestureMode = null;
       draggingCarousel = false;
-      pointerId = event.pointerId;
-      stage.setPointerCapture(pointerId);
       startX = event.clientX;
       startY = event.clientY;
       startTime = performance.now();
@@ -590,17 +721,24 @@
       dragDy = 0;
       dragDirection = 0;
       dragNeighbor = null;
-    });
+    }
 
-    stage.addEventListener("pointermove", event => {
+    function onMobilePointerMove(event) {
       if (!isMobileView() || !trackingPointer) return;
+      if (pointerId !== null && event.pointerId !== pointerId) return;
       const dx = event.clientX - startX;
       const dy = event.clientY - startY;
       const absX = Math.abs(dx);
       const absY = Math.abs(dy);
       if (!gestureMode) {
         if (absX < 10 && absY < 10) return;
-        if (absX > absY * 1.25) {
+        if (gestureOrigin === "caption" || gestureOrigin === "feed") {
+          if (absY > absX * 1.15) {
+            gestureMode = "post";
+          } else {
+            return;
+          }
+        } else if (absX > absY * 1.25) {
           gestureMode = "item";
           draggingCarousel = true;
         } else if (absY > absX * 1.35) {
@@ -640,18 +778,21 @@
         lastMoveTime = now;
         lastMoveY = event.clientY;
       }
-    });
+    }
 
-    stage.addEventListener("pointerup", () => {
+    function onMobilePointerUp(event) {
       if (!isMobileView() || !trackingPointer) return;
+      if (pointerId !== null && event.pointerId !== pointerId) return;
       trackingPointer = false;
-      if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
-      pointerId = null;
+      releasePointerCaptureIfNeeded();
       const elapsed = Math.max(1, performance.now() - startTime);
       const animMs = currentAnimMs();
       if (gestureMode === "item") {
         const current = stage.querySelector(".gallery-media-frame.current");
-        if (!current) return;
+        if (!current) {
+          resetGestureState();
+          return;
+        }
         const width = stage.clientWidth || 1;
         const travelRatio = Math.abs(dragDx) / width;
         const distanceThreshold = isMobileView()
@@ -721,16 +862,12 @@
         }
       }
 
-      gestureMode = null;
-      draggingCarousel = false;
-      dragNeighbor = null;
-      dragDirection = 0;
-      dragDx = 0;
-      dragDy = 0;
-      velocityY = 0;
-    });
+      resetGestureState();
+    }
 
-    stage.addEventListener("pointercancel", () => {
+    function onMobilePointerCancel(event) {
+      if (!trackingPointer) return;
+      if (pointerId !== null && event.pointerId !== pointerId) return;
       trackingPointer = false;
       finalizeGestureSettle(false);
       const animMs = currentAnimMs();
@@ -753,20 +890,23 @@
       } else {
         syncVideoPlayback();
       }
-      gestureMode = null;
-      draggingCarousel = false;
-      dragNeighbor = null;
-      dragDirection = 0;
-      dragDx = 0;
-      dragDy = 0;
-      velocityY = 0;
-      if (pointerId !== null && stage.hasPointerCapture(pointerId)) stage.releasePointerCapture(pointerId);
-      pointerId = null;
+      resetGestureState();
+      releasePointerCaptureIfNeeded();
+    }
+
+    galleryFeed.addEventListener("pointerdown", event => {
+      onMobilePointerDown(event, resolveMobileGestureOrigin(event.target));
     });
+    galleryFeed.addEventListener("pointermove", onMobilePointerMove);
+    galleryFeed.addEventListener("pointerup", onMobilePointerUp);
+    galleryFeed.addEventListener("pointercancel", onMobilePointerCancel);
 
     moreBtn.addEventListener("click", () => {
       state.expanded = !state.expanded;
       syncCaptionState();
+      if (!state.expanded) {
+        caption.scrollTop = 0;
+      }
     });
 
     document.getElementById("galleryBack").addEventListener("click", () => {
@@ -779,6 +919,7 @@
 
     window.addEventListener("resize", () => {
       syncCaptionState();
+      raf(() => refreshCaptionScrollMode(false));
       const post = galleryPosts[state.postIndex];
       const current = stage.querySelector(".gallery-media-frame.current");
       if (current && post && post.items[state.itemIndex] && current.dataset.videoAutoplay !== undefined) {
@@ -788,6 +929,7 @@
     });
 
     updateViewer(0);
+    syncDesktopCaptionPaneHeight();
   </script>
 </body>
 </html>

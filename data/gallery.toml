@@ -1,7 +1,7 @@
 [[posts]]
 slug = "post_0001"
-caption = ""
-date = ""
+caption = "Set out to understand the universe, one lands in a situation trying to find meaning in greek alphabets..."
+date = "October 20, 2020"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -11,8 +11,8 @@ items = [
 
 [[posts]]
 slug = "post_0002"
-caption = ""
-date = ""
+caption = "To those paths that lead to beautiful places..."
+date = "October 25, 2020"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -23,8 +23,8 @@ items = [
 
 [[posts]]
 slug = "post_0003"
-caption = ""
-date = ""
+caption = "Conversations under the moonlit skies..."
+date = "October 29, 2020"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -34,8 +34,11 @@ items = [
 
 [[posts]]
 slug = "post_0004"
-caption = ""
-date = ""
+caption = """
+दिन गुज़रते ही रहे यूँ ही बेमौसम, 
+रास्ते थम जाएँ पर रुक ना पाएँ हम।
+"""
+date = "November 9, 2020"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -45,8 +48,8 @@ items = [
 
 [[posts]]
 slug = "post_0005"
-caption = ""
-date = ""
+caption = "Lights that delight..."
+date = "November 11, 2020"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -56,8 +59,8 @@ items = [
 
 [[posts]]
 slug = "post_0006"
-caption = ""
-date = ""
+caption = "Settings within an editor vs. settings on the camera is the fine line that defines the difference between art and photography"
+date = "November 13, 2020"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -67,8 +70,8 @@ items = [
 
 [[posts]]
 slug = "post_0007"
-caption = ""
-date = ""
+caption = "Bleeding lights"
+date = "December 26, 2020"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -78,8 +81,8 @@ items = [
 
 [[posts]]
 slug = "post_0008"
-caption = ""
-date = ""
+caption = "🙂🙃"
+date = "December 28, 2020"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -89,9 +92,9 @@ items = [
 
 [[posts]]
 slug = "post_0009"
-caption = ""
-date = ""
-show_date = false
+caption = "What's better than a bird model?"
+date = "January 2, 2021"
+show_date = true
 thumb_item = "1.jpg"
 thumb_mode = "contain"
 items = [
@@ -101,8 +104,8 @@ items = [
 
 [[posts]]
 slug = "post_0010"
-caption = ""
-date = ""
+caption = "Reachin' for the unknown"
+date = "January 26, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -112,8 +115,8 @@ items = [
 
 [[posts]]
 slug = "post_0011"
-caption = ""
-date = ""
+caption = "A view by the lake ^_^"
+date = "January 29, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -123,8 +126,8 @@ items = [
 
 [[posts]]
 slug = "post_0012"
-caption = ""
-date = ""
+caption = "Snow covered trees on dull winter mornings 😌"
+date = "February 5, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -135,8 +138,8 @@ items = [
 
 [[posts]]
 slug = "post_0013"
-caption = ""
-date = ""
+caption = "Trying to understand my new found love for lakes 🤔"
+date = "February 20, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -146,8 +149,8 @@ items = [
 
 [[posts]]
 slug = "post_0014"
-caption = ""
-date = ""
+caption = "this lil dude ❤️🐧"
+date = "February 28, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -157,8 +160,8 @@ items = [
 
 [[posts]]
 slug = "post_0015"
-caption = ""
-date = ""
+caption = "Parisian skies"
+date = "March 2, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -168,8 +171,8 @@ items = [
 
 [[posts]]
 slug = "post_0016"
-caption = ""
-date = ""
+caption = "🌛🌜"
+date = "March 12, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -179,8 +182,8 @@ items = [
 
 [[posts]]
 slug = "post_0017"
-caption = ""
-date = ""
+caption = "Imagine living in the Himalayas..."
+date = "March 14, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -190,8 +193,8 @@ items = [
 
 [[posts]]
 slug = "post_0018"
-caption = ""
-date = ""
+caption = "This rainbow took 'what goes around comes around' too seriously"
+date = "March 23, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -201,8 +204,8 @@ items = [
 
 [[posts]]
 slug = "post_0019"
-caption = ""
-date = ""
+caption = "🥂"
+date = "April 11, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -212,8 +215,8 @@ items = [
 
 [[posts]]
 slug = "post_0020"
-caption = ""
-date = ""
+caption = "Lonely paths encapsulate the journey of life"
+date = "April 16, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -223,8 +226,8 @@ items = [
 
 [[posts]]
 slug = "post_0021"
-caption = ""
-date = ""
+caption = "To peace, that's lost in today's world"
+date = "April 28, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -234,8 +237,8 @@ items = [
 
 [[posts]]
 slug = "post_0022"
-caption = ""
-date = ""
+caption = "And sometimes, even the sky cries..."
+date = "May 16, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -245,8 +248,8 @@ items = [
 
 [[posts]]
 slug = "post_0023"
-caption = ""
-date = ""
+caption = "❤️"
+date = "November 8, 2021"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -256,8 +259,8 @@ items = [
 
 [[posts]]
 slug = "post_0024"
-caption = ""
-date = ""
+caption = "🏳️🏳️🏳️"
+date = "February 6, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -267,8 +270,8 @@ items = [
 
 [[posts]]
 slug = "post_0025"
-caption = ""
-date = ""
+caption = "The peace in the sounds of nature 😌"
+date = "February 9, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -280,8 +283,8 @@ items = [
 
 [[posts]]
 slug = "post_0026"
-caption = ""
-date = ""
+caption = "Pristine lake, serene hill 🏞️"
+date = "February 10, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -291,8 +294,8 @@ items = [
 
 [[posts]]
 slug = "post_0027"
-caption = ""
-date = ""
+caption = "The countryside 🏘️"
+date = "February 11, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -305,8 +308,8 @@ items = [
 
 [[posts]]
 slug = "post_0028"
-caption = ""
-date = ""
+caption = "to those wonderlands that transcend imagination..."
+date = "October 21, 2022"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -317,8 +320,8 @@ items = [
 
 [[posts]]
 slug = "post_0029"
-caption = ""
-date = ""
+caption = "⛰️🏔️⛰️"
+date = "October 26, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -328,8 +331,8 @@ items = [
 
 [[posts]]
 slug = "post_0030"
-caption = ""
-date = ""
+caption = "👀👀"
+date = "November 1, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -339,8 +342,8 @@ items = [
 
 [[posts]]
 slug = "post_0031"
-caption = ""
-date = ""
+caption = "🍹"
+date = "November 4, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -350,8 +353,8 @@ items = [
 
 [[posts]]
 slug = "post_0032"
-caption = ""
-date = ""
+caption = "the views 😍"
+date = "November 14, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -363,8 +366,8 @@ items = [
 
 [[posts]]
 slug = "post_0033"
-caption = ""
-date = ""
+caption = "floral landscapes 💐"
+date = "November 15, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -374,8 +377,8 @@ items = [
 
 [[posts]]
 slug = "post_0034"
-caption = ""
-date = ""
+caption = "a gloomy winter commute"
+date = "November 28, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -385,8 +388,8 @@ items = [
 
 [[posts]]
 slug = "post_0035"
-caption = ""
-date = ""
+caption = "⛄❄️"
+date = "December 15, 2022"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -399,8 +402,8 @@ items = [
 
 [[posts]]
 slug = "post_0036"
-caption = ""
-date = ""
+caption = "A gloomy day but a picturesque walk..."
+date = "February 19, 2023"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -410,8 +413,8 @@ items = [
 
 [[posts]]
 slug = "post_0037"
-caption = ""
-date = ""
+caption = "along the river..."
+date = "March 16, 2023"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -422,8 +425,8 @@ items = [
 
 [[posts]]
 slug = "post_0038"
-caption = ""
-date = ""
+caption = "🫣"
+date = "March 18, 2023"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -433,8 +436,8 @@ items = [
 
 [[posts]]
 slug = "post_0039"
-caption = ""
-date = ""
+caption = "🌲🌲"
+date = "April 25, 2023"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -445,8 +448,8 @@ items = [
 
 [[posts]]
 slug = "post_0040"
-caption = ""
-date = ""
+caption = "😇"
+date = "June 29, 2023"
 show_date = false
 thumb_item = "1.webp"
 thumb_mode = "contain"
@@ -456,8 +459,8 @@ items = [
 
 [[posts]]
 slug = "post_0041"
-caption = ""
-date = ""
+caption = "Reward of miles of hiking to the top 😍"
+date = "July 20, 2023"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -471,8 +474,8 @@ items = [
 
 [[posts]]
 slug = "post_0042"
-caption = ""
-date = ""
+caption = "🥖🥖"
+date = "August 15, 2023"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -483,8 +486,8 @@ items = [
 
 [[posts]]
 slug = "post_0043"
-caption = ""
-date = ""
+caption = "sometimes i wonder..."
+date = "August 17, 2023"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -495,8 +498,8 @@ items = [
 
 [[posts]]
 slug = "post_0044"
-caption = ""
-date = ""
+caption = "CERN control center- an (almost) inside look"
+date = "August 23, 2023"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -506,8 +509,8 @@ items = [
 
 [[posts]]
 slug = "post_0045"
-caption = ""
-date = ""
+caption = "⛲⛲"
+date = "September 7, 2023"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -518,8 +521,8 @@ items = [
 
 [[posts]]
 slug = "post_0046"
-caption = ""
-date = ""
+caption = "research group retreats 🙈"
+date = "September 27, 2023"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -530,8 +533,8 @@ items = [
 
 [[posts]]
 slug = "post_0047"
-caption = ""
-date = ""
+caption = "time to wave this view a goodbye 👋"
+date = "October 1, 2023"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -541,8 +544,8 @@ items = [
 
 [[posts]]
 slug = "post_0048"
-caption = ""
-date = ""
+caption = "a view from the window"
+date = "February 26, 2024"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -552,8 +555,8 @@ items = [
 
 [[posts]]
 slug = "post_0049"
-caption = ""
-date = ""
+caption = "🏠? 🏢? 🤔"
+date = "March 31, 2024"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -564,8 +567,8 @@ items = [
 
 [[posts]]
 slug = "post_0050"
-caption = ""
-date = ""
+caption = "a windmill"
+date = "April 3, 2024"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
@@ -575,8 +578,8 @@ items = [
 
 [[posts]]
 slug = "post_0051"
-caption = ""
-date = ""
+caption = "a peek at grenoble 🇫🇷"
+date = "April 11, 2024"
 show_date = false
 thumb_item = "1.jpg"
 thumb_mode = "contain"
